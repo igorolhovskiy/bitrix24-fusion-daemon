@@ -30,3 +30,13 @@ freeswitch
     });
 
 log('VFusion daemon started');
+
+const cache = require('./lib/cache/userlist');
+
+cache('XXXXX', (err, res) => {
+    if (err) {
+        log(err);
+        return;
+    }
+    log(res);
+});
