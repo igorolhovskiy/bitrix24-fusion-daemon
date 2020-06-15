@@ -12,6 +12,7 @@ services:
     environment:
       NODE_ENV: development
       ESL_HOST: fs
+      DEBUG: "true"
     networks:
       main:
         aliases:
