@@ -1,0 +1,22 @@
+{
+    "name": "bitrix_fusion_daemon",
+    "version": "0.0.1",
+    "description": "Daemon to listen FreeSWITCH Events and send em to Bitrix24 via WebHooks",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon /opt/app/index.js",
+        "start": "node /opt/app/index.js"
+    },
+    "author": "Igor Olhovskiy",
+    "license": "ISC",
+    "dependencies": {
+        "lodash": "^4.17.15",
+        "memory-cache": "^0.2.0",
+        "modesl": "^1.2.1",
+        "urllib": "^2.35.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.4"
+    }
+}
