@@ -42,7 +42,7 @@ function getEmployeeList(bitrixURL, callback) {
 
         userList = userList.result;
 
-        let result = {};
+        employeeList = {};
 
         for (let user in userList) {
 
@@ -54,12 +54,12 @@ function getEmployeeList(bitrixURL, callback) {
                 log("Strange, we have a user without ID: " + JSON.stringify(user));
                 continue;
             }
-            result[userList[user].UF_PHONE_INNER] = userList[user].ID;
+            employeeList[userList[user].UF_PHONE_INNER] = userList[user].ID;
         }
 
-        cache.put('employeeList', result, 3600);
+        cache.put('employeeList', employeeList, 3600);
 
-        callback(null, result);
+        callback(null, employeeList);
     });
 }   
 
