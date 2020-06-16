@@ -8,21 +8,21 @@ const freeswitch = require('./init/freeswitch'),
 freeswitch
     .on('esl::event::CHANNEL_PROGRESS::*', function(e) {
         let headers = headersProcess(e.headers);
-        if (typeof(headers['variable_bitrix24_url']) === 'undefined') {
+        if (typeof(headers['variable_bitrix24_url']) === 'undefined' || headers['variable_bitrix24_url'] === '') {
             return;
         }
         callRinging(headers);
     })
     .on('esl::event::CHANNEL_BRIDGE::*', function(e) {
         let headers = headersProcess(e.headers);
-        if (typeof(headers['variable_bitrix24_url']) === 'undefined') {
+        if (typeof(headers['variable_bitrix24_url']) === 'undefined' || headers['variable_bitrix24_url'] === '') {
             return;
         }
         callAnswer(headers);
     })
     .on('esl::event::CHANNEL_DESTROY::*', function(e) {
         let headers = headersProcess(e.headers);
-        if (typeof(headers['variable_bitrix24_url']) === 'undefined') {
+        if (typeof(headers['variable_bitrix24_url']) === 'undefined' || headers['variable_bitrix24_url'] === '') {
             return;
         }
         //log("CHANNEL_DESTROY " + JSON.stringify(headers));
@@ -31,9 +31,9 @@ freeswitch
 
 log('VFusion daemon started');
 
-const cache = require('./lib/cache/userlist');
+const userList = require('./lib/cache/getEmployeeList');
 
-cache('XXXXX', (err, res) => {
+userList('XXXXX', (err, res) => {
     if (err) {
         log(err);
         return;
