@@ -1,15 +1,15 @@
-const log = require('../../init/logger')(module),
-    request = require('urllib');
+
+const request = require('urllib');
 
 let getB24callUuid = (callInfo, cache) => {
 
-    if (!callInfo['uuid']) {
+    if (!callInfo['callUuid']) {
         return new Promise((resolve, reject) => {
             reject("No UUID provided!");
         });
     }
 
-    let b24callUuid = cache.get('uuid_' + callInfo['uuid']);
+    let b24callUuid = cache.get('uuid_' + callInfo['callUuid']);
     if (b24callUuid) {
         return b24callUuid;
     }
@@ -28,11 +28,12 @@ let getB24callUuid = (callInfo, cache) => {
             return;
         }
 
-        let requestURL = callInfo['url'] + "/telephony.externalcall.register.json?USER_ID=" + callInfo['userID'];
-        requestURL += "&PHONE_NUMBER=" + callInfo['callerid'];
-        requestURL += "&TYPE=2";
-        requestURL += "&CRM_CREATE=1";
-        requestURL += "&SHOW=0";
+        let requestURL = callInfo['url'] + "/telephony.externalcall.register.json?";
+            requestURL += "USER_ID=" + callInfo['userID'];
+            requestURL += "&PHONE_NUMBER=" + callInfo['callerid'];
+            requestURL += "&TYPE=2";
+            requestURL += "&CRM_CREATE=1";
+            requestURL += "&SHOW=0";
 
         request.request(requestURL, (err, data, res) => {
             if (err) {

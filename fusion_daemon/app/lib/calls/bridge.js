@@ -1,34 +1,87 @@
 const log = require('../../init/logger')(module),
     request = require('urllib'),
-    commonBody = require('./common');
+    getB24callUuid = require('../cache/getB24CallUuid'),
+    getEmployeeList = require('../cache/getEmployeeList');
 
 
-let bridge = (headers, cache) => {
+function hideCallScreen(bitrix24Info, cache, callback) {
 
-    if (typeof(headers['Other-Leg-Destination-Number']) == 'undefined') {
-        log("Other-Leg-Destination-Number is not set!");
-        log(JSON.stringify(headers, null, 2));
+    // Save all showCallScreens to database
+
+    let usersWatchingScreen = cache.get('showscreen_' + bitrix24Info['b24uuid']);
+
+    if (!usersWatchingScreen) {
+        log('No users are watching this call, skipping...');
+        callback(null);
+        return;
+    }
+    try {
+        usersWatchingScreen = JSON.parse(usersWatchingScreen);
+    } catch (e) {
+        callback(e);
         return;
     }
 
-    let vtiger_url_buff = new Buffer.from(headers['variable_vtiger_url'], 'base64');
-    let vtiger_url = vtiger_url_buff.toString('ascii');
+    usersWatchingScreen.forEach((user) => {
+        if (user !== bitrix24Info['userID']) {
 
-    let requestBody = commonBody(headers);
+            let requestURL = bitrix24Info['url'] + "/telephony.externalcall.hide?";
+                requestURL += "USER_ID=" + bitrix24Info['userID'];
+                requestURL += "CALL_ID=" + bitrix24Info['b24uuid'];
+            
+            request.request(requestURL, (err) => {
+                if (err) {
+                    log(err);
+                }
+            });
+        }
+    });
 
-    requestBody['callstatus'] = 'call_answered';
-    requestBody['number'] = headers['Other-Leg-Destination-Number'];
+    callback(null);
+}
 
-    let request_options = {
-        'method' : 'POST',
-        'contentType' : 'json',
-        'followRedirect' : true,
-        'timeout' : [3000, 5000],
-        'data' : requestBody
+let bridge = (headers, cache) => {
+
+    if (typeof(headers['variable_dialed_user']) == 'undefined') {
+        log("variable_dialed_user is not set!");
+        return;
     }
-    request.request(vtiger_url, request_options);
-    
-    log(JSON.stringify(request_options, null, 2));
+
+    let dialedUser = headers['variable_dialed_user'];
+    let bitrix24Url = headers['variable_bitrix24_url'];
+
+    getEmployeeList(bitrix24Url, (err, employeeList) => {
+
+        if (err) {
+            log("Cannot get employeeList: " + err);
+            return;
+        }
+
+        if (typeof employeeList[dialedUser] === 'undefined') {
+            log("User with extension " + dialedUser + " not found");
+            return;
+        }
+
+        let bitrix24Info = {
+            url: bitrix24Url,
+            userID: employeeList[dialedUser],
+            callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
+        }
+
+        getB24callUuid(bitrix24Info, cache)
+            .then((b24callUuid) => {
+                bitrix24Info['b24uuid'] = b24callUuid;
+                hideCallScreen(bitrix24Info, cache, (err) => {
+                    if (err) {
+                        log(err);
+                    }
+                });
+            }).catch((err) => {
+                // If we can't get call UUID - do nothing. Really
+                log(err);
+            });
+
+    });
 }
 
 module.exports = bridge;
