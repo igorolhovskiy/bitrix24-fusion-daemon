@@ -1,13 +1,13 @@
 const log = require('../../init/logger')(module),
       request = require('urllib'),
-      commonBody = require('./common'),
+      getB24callUuid = require('../cache/getB24CallUuid'),
       getEmployeeList = require('../cache/getEmployeeList');
 
 function showCallScreen(bitrix24Info, cache, callback) {
 
     // Save all showCallScreens to database
 
-    let usersWatchingScreen = cache.get('showscreen_' +bitrix24Info['b24uuid'])
+    let usersWatchingScreen = cache.get('showscreen_' + bitrix24Info['b24uuid'])
     try {
         if (!usersWatchingScreen) {
             usersWatchingScreen = [bitrix24Info['userID']];
@@ -15,15 +15,21 @@ function showCallScreen(bitrix24Info, cache, callback) {
             usersWatchingScreen = JSON.parse(usersWatchingScreen);
             usersWatchingScreen.push(bitrix24Info['userID']);
         }
-        cache.put('showscreen_' +bitrix24Info['b24uuid'], JSON.stringify(usersWatchingScreen));
+        cache.put('showscreen_' + bitrix24Info['b24uuid'], JSON.stringify(usersWatchingScreen), 10800);
     } catch (e) {
-        callback(e, null);
+        callback(e);
         return;
     }
-}
 
-function registerCall(bitrix24Info, cache, callback) {
-
+    let requestURL = bitrix24Info['url'] + "/telephony.externalcall.show?";
+        requestURL += "USER_ID=" + bitrix24Info['userID'];
+        requestURL += "CALL_ID=" + bitrix24Info['b24uuid'];
+    
+    request.request(requestURL, (err) => {
+        if (err) {
+            log(err);
+        }
+    });
 }
 
 let progress = (headers, cache) => {
@@ -34,8 +40,7 @@ let progress = (headers, cache) => {
     }
 
     let dialedUser = headers['variable_dialed_user'];
-
-    let bitrix24Url = headers['variable_bitrix24_url']
+    let bitrix24Url = headers['variable_bitrix24_url'];
 
     getEmployeeList(bitrix24Url, (err, employeeList) => {
 
@@ -45,56 +50,31 @@ let progress = (headers, cache) => {
         }
 
         if (typeof employeeList[dialedUser] === 'undefined') {
-            log("User with " + dialedUser + " extension not found");
+            log("User with extension" + dialedUser + " not found");
             return;
         }
 
         let bitrix24Info = {
             url: bitrix24Url,
             callerid: headers['Caller-ID-Number'],
-            userID: employeeList[dialedUser]
+            userID: employeeList[dialedUser],
+            callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
         }
 
-        let uuid = headers['variable_call_uuid'] || headers['variable_uuid'];
-        let b24uuid = cache.get('callinfo_' + uuid);
-
-        if (b24uuid) {
-            // We aware of this call
-            if (b24uuid === 'none') {
-                // We're waiting here for update
-            } else {
-                // We're aware of bitrix24uuid
-                bitrix24Info['b24uuid'] = b24uuid;
-
-                showCallScreen(bitrix24Info, cache, (err, res) => {
+        getB24callUuid(bitrix24Info, cache)
+            .then((b24callUuid) => {
+                bitrix24Info['b24uuid'] = b24callUuid;
+                showCallScreen(bitrix24Info, cache, (err) => {
                     if (err) {
-                        log("Cannot show callScreen: " + err);
+                        log(err);
                     }
                 });
-            }
-            return;
-        }
-
-        cache.put('callinfo_' + uuid, 'none', 3600);
-
-        registerCall(bitrix24Info, (err, b24info) => {
-            if (err) {
-                log("Cannot register call with Bitrix24:" + err);
-                return;
-            }
-            cache.put('callinfo_' + uuid, b24info.uuid, 3600);
-
-            bitrix24Info['b24uuid'] = b24info.uuid;
-
-            showCallScreen(bitrix24Info, cache, (err, res) => {
-                if (err) {
-                    log("Cannot show call screen:" + err);
-                }
+            }).catch((err) => {
+                // If we can't get call UUID - do nothing. Really
+                log(err);
             });
-        });
-    });
 
-    
+    });
 }
 
 module.exports = progress;
