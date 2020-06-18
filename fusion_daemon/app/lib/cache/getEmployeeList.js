@@ -1,4 +1,4 @@
-var cache = require('memory-cache'),
+const cache = require('memory-cache'),
     log = require('../../init/logger')(module),
     request = require('urllib');
 

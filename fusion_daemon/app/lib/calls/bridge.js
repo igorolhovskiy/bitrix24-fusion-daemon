@@ -3,7 +3,7 @@ const log = require('../../init/logger')(module),
     commonBody = require('./common');
 
 
-let bridge = (headers) => {
+let bridge = (headers, cache) => {
 
     if (typeof(headers['Other-Leg-Destination-Number']) == 'undefined') {
         log("Other-Leg-Destination-Number is not set!");
