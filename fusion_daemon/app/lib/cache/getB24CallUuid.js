@@ -2,7 +2,7 @@
 const request = require('urllib'),
     log = require('../../init/logger')(module);
 
-let getB24callUuid = (callInfo, cache) => {
+let getB24callUuid = (callInfo) => {
 
 if (!callInfo['callUuid']) {
     return new Promise((resolve, reject) => {

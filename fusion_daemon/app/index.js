@@ -6,7 +6,8 @@ const freeswitch = require('./init/freeswitch'),
     cache = require('memory-cache');
     //callHangup = require('./lib/hangup');
 
-const request = require('urllib');
+// Declare cache globally
+global.cache = new cache.Cache();
 
 freeswitch
     .on('esl::event::CHANNEL_PROGRESS::*', function(e) {
@@ -14,14 +15,14 @@ freeswitch
         if (typeof(headers['variable_bitrix24_url']) === 'undefined' || headers['variable_bitrix24_url'] === '') {
             return;
         }
-        callRinging(headers, cache);
+        callRinging(headers);
     })
     .on('esl::event::CHANNEL_BRIDGE::*', function(e) {
         let headers = headersProcess(e.headers);
         if (typeof(headers['variable_bitrix24_url']) === 'undefined' || headers['variable_bitrix24_url'] === '') {
             return;
         }
-        callAnswer(headers, cache);
+        callAnswer(headers);
     })
     .on('esl::event::CHANNEL_DESTROY::*', function(e) {
         let headers = headersProcess(e.headers);

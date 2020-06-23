@@ -4,7 +4,7 @@ const log = require('../../init/logger')(module),
     getEmployeeList = require('../cache/getEmployeeList');
 
 
-function hideCallScreen(bitrix24Info, cache, callback) {
+function hideCallScreen(bitrix24Info, callback) {
 
     // Save all showCallScreens to database
 
@@ -40,7 +40,7 @@ function hideCallScreen(bitrix24Info, cache, callback) {
     callback(null);
 }
 
-let bridge = (headers, cache) => {
+let bridge = (headers) => {
 
     if (typeof(headers['Other-Leg-Callee-ID-Number']) == 'undefined') {
         log("bridge Other-Leg-Callee-ID-Number is not set!");
@@ -52,7 +52,7 @@ let bridge = (headers, cache) => {
 
     log("Call was answered by " + dialedUser);
 
-    getEmployeeList(bitrix24Url, cache, (err, employeeList) => {
+    getEmployeeList(bitrix24Url, (err, employeeList) => {
 
         if (err) {
             log("bridge Cannot get employeeList: " + err);
@@ -74,7 +74,7 @@ let bridge = (headers, cache) => {
             .then((b24callUuid) => {
                 bitrix24Info['b24uuid'] = b24callUuid;
                 log("Hiding call screens...");
-                hideCallScreen(bitrix24Info, cache, (err) => {
+                hideCallScreen(bitrix24Info, (err) => {
                     if (err) {
                         log("bridge" + err);
                     }

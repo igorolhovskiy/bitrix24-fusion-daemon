@@ -1,7 +1,7 @@
 const log = require('../../init/logger')(module),
     request = require('urllib');
 
-function getEmployeeList(bitrixURL, cache, callback) {
+function getEmployeeList(bitrixURL, callback) {
     
     let employeeList = cache.get('employeeList');
 

@@ -3,7 +3,7 @@ const log = require('../../init/logger')(module),
       getB24callUuid = require('../cache/getB24CallUuid'),
       getEmployeeList = require('../cache/getEmployeeList');
 
-function showCallScreen(bitrix24Info, cache, callback) {
+function showCallScreen(bitrix24Info, callback) {
 
     // Save all showCallScreens to database
 
@@ -34,7 +34,7 @@ function showCallScreen(bitrix24Info, cache, callback) {
     });
 }
 
-let progress = (headers, cache) => {
+let progress = (headers) => {
 
     if (typeof(headers['variable_dialed_user']) == 'undefined') {
         log("variable_dialed_user is not set!");
@@ -44,7 +44,7 @@ let progress = (headers, cache) => {
     let dialedUser = headers['variable_dialed_user'];
     let bitrix24Url = headers['variable_bitrix24_url'];
 
-    getEmployeeList(bitrix24Url, cache, (err, employeeList) => {
+    getEmployeeList(bitrix24Url, (err, employeeList) => {
 
         if (err) {
             log("Cannot get employeeList: " + err);
@@ -63,13 +63,13 @@ let progress = (headers, cache) => {
             callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
         }
 
-        getB24callUuid(bitrix24Info, cache)
+        getB24callUuid(bitrix24Info)
             .then((b24callUuid) => {
                 bitrix24Info['b24uuid'] = b24callUuid;
 
                 log("Showing screen to " + dialedUser + "/" + employeeList[dialedUser]);
 
-                showCallScreen(bitrix24Info, cache, (err) => {
+                showCallScreen(bitrix24Info, (err) => {
                     if (err) {
                         log("showCallScreen failed with " + err);
                         log(bitrix24Info);
