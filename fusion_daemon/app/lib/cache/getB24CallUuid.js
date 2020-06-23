@@ -1,6 +1,6 @@
 
 const request = require('urllib'),
-log = require('../../init/logger')(module);
+    log = require('../../init/logger')(module);
 
 let getB24callUuid = (callInfo, cache) => {
 
