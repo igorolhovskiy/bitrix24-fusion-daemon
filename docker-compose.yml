@@ -11,41 +11,8 @@ services:
       - app_node_modules:/opt/node_modules
     environment:
       NODE_ENV: development
-      ESL_HOST: fs
       DEBUG: "true"
-    networks:
-      main:
-        aliases:
-          - app
-  
-  http:
-    image: mock_http_server:fusion_daemon
-    build:
-      context: .
-      dockerfile: Dockerfile.mock
-    volumes:
-      - ./mock_http_server:/opt
-      - mock_node_modules:/opt/node_modules
-    networks:
-      main:
-        aliases:
-          - http
-  
-  freeswitch:
-    image: freeswitch:fusion_daemon
-    build:
-      context: .
-      dockerfile: Dockerfile.freeswitch
-    ports: 
-      - "5060:5060/udp"
-    networks:
-      main:
-        aliases: 
-          - fs
-
-networks:
- main:
+    network_mode: host
 
 volumes:
   app_node_modules:
-  mock_node_modules:
