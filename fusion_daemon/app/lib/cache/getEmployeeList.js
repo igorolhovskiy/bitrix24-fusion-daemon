@@ -1,22 +1,22 @@
-const cache = require('memory-cache'),
-    log = require('../../init/logger')(module),
+const log = require('../../init/logger')(module),
     request = require('urllib');
 
-function getEmployeeList(bitrixURL, callback) {
+function getEmployeeList(bitrixURL, cache, callback) {
     
     let employeeList = cache.get('employeeList');
 
     if (employeeList) {
-        log("Got data from cache!");
+        log("getEmployeeList Got data from cache!");
         callback(null, employeeList);
         return;
     }
 
-    log("Cache is empty, getting data from server...");
+    log("getEmployeeList Cache is empty, getting data from server...");
 
     let requestURL = bitrixURL + "/user.get.json?USER_TYPE=employee";
 
     request.request(requestURL, (err, data, res) => {
+
         if (err) {
             callback(err);
             return;
