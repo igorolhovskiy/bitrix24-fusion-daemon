@@ -11,7 +11,7 @@ function hideCallScreen(bitrix24Info, cache, callback) {
     let usersWatchingScreen = cache.get('showscreen_' + bitrix24Info['b24uuid']);
 
     if (!usersWatchingScreen) {
-        log('No users are watching this call, skipping...');
+        log('hideCallScreen No users are watching this call, skipping...');
         callback(null);
         return;
     }
@@ -26,12 +26,12 @@ function hideCallScreen(bitrix24Info, cache, callback) {
         if (user !== bitrix24Info['userID']) {
 
             let requestURL = bitrix24Info['url'] + "/telephony.externalcall.hide?";
-                requestURL += "USER_ID=" + bitrix24Info['userID'];
-                requestURL += "CALL_ID=" + bitrix24Info['b24uuid'];
+                requestURL += "USER_ID=" + user;
+                requestURL += "&CALL_ID=" + bitrix24Info['b24uuid'];
             
             request.request(requestURL, (err) => {
                 if (err) {
-                    log(err);
+                    log("hideCallScreen " + err);
                 }
             });
         }
@@ -42,23 +42,25 @@ function hideCallScreen(bitrix24Info, cache, callback) {
 
 let bridge = (headers, cache) => {
 
-    if (typeof(headers['variable_dialed_user']) == 'undefined') {
-        log("variable_dialed_user is not set!");
+    if (typeof(headers['Other-Leg-Callee-ID-Number']) == 'undefined') {
+        log("bridge Other-Leg-Callee-ID-Number is not set!");
         return;
     }
 
-    let dialedUser = headers['variable_dialed_user'];
+    let dialedUser = headers['Other-Leg-Callee-ID-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];
 
-    getEmployeeList(bitrix24Url, (err, employeeList) => {
+    log("Call was answered by " + dialedUser);
+
+    getEmployeeList(bitrix24Url, cache, (err, employeeList) => {
 
         if (err) {
-            log("Cannot get employeeList: " + err);
+            log("bridge Cannot get employeeList: " + err);
             return;
         }
 
         if (typeof employeeList[dialedUser] === 'undefined') {
-            log("User with extension " + dialedUser + " not found");
+            log("bridge User with extension " + dialedUser + " not found");
             return;
         }
 
@@ -71,14 +73,15 @@ let bridge = (headers, cache) => {
         getB24callUuid(bitrix24Info, cache)
             .then((b24callUuid) => {
                 bitrix24Info['b24uuid'] = b24callUuid;
+                log("Hiding call screens...");
                 hideCallScreen(bitrix24Info, cache, (err) => {
                     if (err) {
-                        log(err);
+                        log("bridge" + err);
                     }
                 });
             }).catch((err) => {
                 // If we can't get call UUID - do nothing. Really
-                log(err);
+                log("bridge " + err);
             });
 
     });
