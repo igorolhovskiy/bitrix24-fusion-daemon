@@ -6,8 +6,6 @@ const freeswitch = require('./init/freeswitch'),
     callAnswer = require('./lib/calls/bridge');
     //callHangup = require('./lib/hangup');
 
-const request = require('urllib');
-
 freeswitch
     .on('esl::event::CHANNEL_PROGRESS::*', function(e) {
         let headers = headersProcess(e.headers);
