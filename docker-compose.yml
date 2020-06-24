@@ -6,6 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.app
+    restart: always
     volumes:
       - ./fusion_daemon:/opt
       - app_node_modules:/opt/node_modules

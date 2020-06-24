@@ -42,12 +42,13 @@ function hideCallScreen(bitrix24Info, cache, callback) {
 
 let bridge = (headers, cache) => {
 
-    if (typeof(headers['Other-Leg-Callee-ID-Number']) == 'undefined') {
-        log("bridge Other-Leg-Callee-ID-Number is not set!");
+    if (typeof(headers['Other-Leg-Destination-Number']) == 'undefined') {
+        log("Other-Leg-Destination-Number is not set!");
+        log(JSON.stringify(headers, null, 2));
         return;
     }
 
-    let dialedUser = headers['Other-Leg-Callee-ID-Number'];
+    let dialedUser = headers['Other-Leg-Destination-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];
 
     log("Call was answered by " + dialedUser);
