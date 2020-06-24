@@ -1,7 +1,7 @@
 const freeswitch = require('./init/freeswitch'),
     headersProcess = require('./init/fsheadersprocess'),
     log = require('./init/logger')(module),
-    cache = require('memory-cache'),
+    globalCache = require('memory-cache'),
     callRinging = require('./lib/calls/progress'),
     callAnswer = require('./lib/calls/bridge');
     //callHangup = require('./lib/hangup');
