@@ -57,6 +57,7 @@ function getEmployeeList(bitrixURL, cache, callback) {
             employeeList[userList[user].UF_PHONE_INNER] = userList[user].ID;
         }
 
+        log("Saving employeeList to cache");
         cache.put('employeeList', employeeList, 3600);
 
         callback(null, employeeList);

@@ -45,25 +45,25 @@ let getB24callUuid = (callInfo, cache) => {
                 reject(err);
                 return;
             }
-    
+
             if (res.statusCode !== 200) {
                 reject("Server failed to answer with " + res.statusCode + " code");
             }
-    
+
             let registeredCall = data.toString();
-    
+
             try {
                 registeredCall = JSON.parse(registeredCall);
             } catch (e) {
                 reject("getB24callUuid Answer from server is not JSON");
                 return;
             }
-    
+
             if (typeof registeredCall.result === 'undefined') {
                 reject("getB24callUuid Missing result section in answer");
                 return;
             }
-    
+
             registeredCall = registeredCall.result;
 
             if (!registeredCall['CALL_ID']) {
@@ -73,9 +73,9 @@ let getB24callUuid = (callInfo, cache) => {
             resolve(registeredCall['CALL_ID']);
         });
     });
-    
+
     cache.put('uuid_' + callInfo['callUuid'], b24callUuid, 10800); // Store for 3h
-    
+
     return b24callUuid;
 }
 

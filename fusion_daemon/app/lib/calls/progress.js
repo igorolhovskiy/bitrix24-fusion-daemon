@@ -36,12 +36,7 @@ function showCallScreen(bitrix24Info, cache, callback) {
 
 let progress = (headers, cache) => {
 
-    if (typeof(headers['variable_dialed_user']) == 'undefined') {
-        log("variable_dialed_user is not set!");
-        return;
-    }
-
-    let dialedUser = headers['variable_dialed_user'];
+    let dialedUser = headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];
 
     getEmployeeList(bitrix24Url, cache, (err, employeeList) => {
