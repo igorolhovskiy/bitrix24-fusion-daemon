@@ -27,7 +27,7 @@ let getB24CallInfo = (callInfo, cache) => {
 
     if (b24CallInfo.length === 0) {
         b24CallInfo.push(new Promise((resolve, reject) => {
-            reject("getB24CallInfo No Bitrix info for this call");
+            reject("getB24CallInfo No Bitrix info for call " + callInfo['callUuid']);
         }));
     }
 

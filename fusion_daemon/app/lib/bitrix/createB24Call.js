@@ -77,6 +77,8 @@ let createB24CallInfo = (callInfo, cache) => {
             resolve({
                 uuid: registeredCall['CALL_ID'],
                 type: callInfo['type'],
+                user: callInfo['userID'],
+                phone: callInfo['callerid']
             });
         });
     });
