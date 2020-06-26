@@ -1,6 +1,6 @@
 const log = require('../../init/logger')(module),
       getB24CallInfo = require('../bitrix/getB24Call'),
-      getEmployeeList = require('../bitrix/getEmployeeList'),
+      getB24EmployeeList = require('../bitrix/getB24EmployeeList'),
       showCallScreen = require('../bitrix/showCallScren');
 
 
@@ -9,7 +9,7 @@ let progress = (headers, cache) => {
     let dialedUser = headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];
 
-    getEmployeeList(bitrix24Url, cache, (err, employeeList) => {
+    getB24EmployeeList(bitrix24Url, cache, (err, employeeList) => {
 
         if (err) {
             log("Cannot get employeeList: " + err);
@@ -30,7 +30,7 @@ let progress = (headers, cache) => {
         setTimeout(() => {
             getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
                 legInfo
-                    .then((b24callInfo) => {
+                    .then(b24callInfo => {
                         if (b24callInfo['type'] === 2) { // Show popup only for incoming calls
 
                             log("Showing screen to " + dialedUser + "/" + employeeList[dialedUser]);
@@ -42,9 +42,9 @@ let progress = (headers, cache) => {
                                 }
                             });
                         }
-                    }).catch((err) => {
+                    }).catch(err => {
                         // If we can't get call UUID - do nothing. Really
-                        log("getB24CallInfo failed with " + err);
+                        log("progress getB24CallInfo failed with " + err);
                     });
             });  
         }, 500);

@@ -1,6 +1,6 @@
 const log = require('../../init/logger')(module),
       createB24Call = require('../bitrix/createB24Call'),
-      getEmployeeList = require('../bitrix/getEmployeeList');
+      getB24EmployeeList = require('../bitrix/getB24EmployeeList');
 
 let create = (headers, cache) => {
 
@@ -9,7 +9,7 @@ let create = (headers, cache) => {
     let legBNumber = headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
     let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
 
-    getEmployeeList(bitrix24Url, cache, (err, employeeList) => {
+    getB24EmployeeList(bitrix24Url, cache, (err, employeeList) => {
 
         if (err) {
             log("create Cannot get employeeList: " + err);
@@ -46,9 +46,9 @@ let create = (headers, cache) => {
             }
 
             createB24Call(bitrix24Info, cache)
-                .then((b24callInfo) => {                    
+                .then(b24callInfo => {                    
                     log("Registered outbound call " + bitrix24Info['callUuid'] + " :" + b24callInfo['uuid']);
-                }).catch((err) => {
+                }).catch(err => {
                     // If we can't get call UUID - do nothing. Really
                     log("Registering outbound call " + bitrix24Info['callUuid'] + " failed: " + err);
                 });
