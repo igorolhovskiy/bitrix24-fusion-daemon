@@ -3,7 +3,7 @@ const log = require('../../init/logger')(module),
 
 let hideCallScreen = (bitrix24Info, cache, callback) => {
 
-    // Save all showCallScreens to database
+    // Get all showCallScreens from cache
 
     let usersWatchingScreen = cache.get('showscreen_' + bitrix24Info['b24uuid']);
 

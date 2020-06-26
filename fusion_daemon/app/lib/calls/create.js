@@ -16,25 +16,6 @@ let create = (headers, cache) => {
             return;
         }
 
-        if (employeeList[legANumber]) {
-            log("Registering outbound call from extension " + legANumber);
-            let bitrix24Info = {
-                url: bitrix24Url,
-                callerid: legBNumber,
-                userID: employeeList[legANumber],
-                callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
-                type: 1 // 1 - outbound, 2 - inbound.
-            }
-
-            createB24Call(bitrix24Info, cache)
-                .then((b24callInfo) => {                    
-                    log("Registered outbound call " + bitrix24Info['callUuid'] + " :" + b24callInfo['uuid']);
-                }).catch((err) => {
-                    // If we can't get call UUID - do nothing. Really
-                    log("Registering outbound call " + bitrix24Info['callUuid'] + " failed: " + err);
-                });
-        }
-
         if (employeeList[legBNumber]) {
             log("Registering inbound call to extension " + legBNumber);
             let bitrix24Info = {
@@ -51,6 +32,25 @@ let create = (headers, cache) => {
                 }).catch((err) => {
                     // If we can't get call UUID - do nothing. Really
                     log("Registering inbound call " + bitrix24Info['callUuid'] + " failed: " + err);
+                });
+        }
+
+        if (employeeList[legANumber]) {
+            log("Registering outbound call from extension " + legANumber);
+            let bitrix24Info = {
+                url: bitrix24Url,
+                callerid: legBNumber,
+                userID: employeeList[legANumber],
+                callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
+                type: 1 // 1 - outbound, 2 - inbound.
+            }
+
+            createB24Call(bitrix24Info, cache)
+                .then((b24callInfo) => {                    
+                    log("Registered outbound call " + bitrix24Info['callUuid'] + " :" + b24callInfo['uuid']);
+                }).catch((err) => {
+                    // If we can't get call UUID - do nothing. Really
+                    log("Registering outbound call " + bitrix24Info['callUuid'] + " failed: " + err);
                 });
         }
     });

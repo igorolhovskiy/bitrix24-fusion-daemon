@@ -28,23 +28,25 @@ let progress = (headers, cache) => {
         }
         // Call function 500 ms after to make sure cache is populated
         setTimeout(() => {
-            getB24CallInfo(bitrix24Info, cache)
-                .then((b24callInfo) => {
-                    if (b24callInfo['type'] === 2) { // Show popup only for incoming calls
+            getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
+                legInfo
+                    .then((b24callInfo) => {
+                        if (b24callInfo['type'] === 2) { // Show popup only for incoming calls
 
-                        log("Showing screen to " + dialedUser + "/" + employeeList[dialedUser]);
+                            log("Showing screen to " + dialedUser + "/" + employeeList[dialedUser]);
 
-                        bitrix24Info['b24uuid'] = b24callInfo['uuid'];
-                        showCallScreen(bitrix24Info, cache, (err) => {
-                            if (err) {
-                                log("showCallScreen failed with " + err);
-                            }
-                        });
-                    }
-                }).catch((err) => {
-                    // If we can't get call UUID - do nothing. Really
-                    log("getB24CallInfo failed with " + err);
-                });
+                            bitrix24Info['b24uuid'] = b24callInfo['uuid'];
+                            showCallScreen(bitrix24Info, cache, (err) => {
+                                if (err) {
+                                    log("showCallScreen failed with " + err);
+                                }
+                            });
+                        }
+                    }).catch((err) => {
+                        // If we can't get call UUID - do nothing. Really
+                        log("getB24CallInfo failed with " + err);
+                    });
+            });  
         }, 500);
     });
 }
