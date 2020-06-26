@@ -1,8 +1,9 @@
 
 const request = require('urllib'),
-    log = require('../../init/logger')(module);
+    log = require('../../init/logger')(module),
+    getB24CallInfo = require('./getB24Call');
 
-let getB24callUuid = (callInfo, cache) => {
+let createB24CallInfo = (callInfo, cache) => {
 
     if (!callInfo['callUuid']) {
         return new Promise((resolve, reject) => {
@@ -10,32 +11,32 @@ let getB24callUuid = (callInfo, cache) => {
         });
     }
 
-    let b24callUuid = cache.get('uuid_' + callInfo['callUuid']);
-    if (b24callUuid) {
-        log("This getB24callUuid is exists in cache, returning...");
-        return b24callUuid;
+    let b24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_" + callInfo['type']);
+    if (b24CallInfo) {
+        log("createB24CallInfo Call is exists in cache, returning...");
+        return b24CallInfo;
     }
 
-    log("getB24callUuid Getting info for uuid " + callInfo['callUuid']);
-
-    b24callUuid = new Promise((resolve, reject) => {
+    b24Callnfo = new Promise((resolve, reject) => {
         if (!callInfo['userID']) {
-            reject("getB24callUuid No UserID provided!");
+            reject("createB24callInfo No UserID provided!");
             return;
         }
+
         if (!callInfo['url']) {
-            reject("getB24callUuid No Bitrix24 URL provided!");
+            reject("createB24callInfo No Bitrix24 URL provided!");
             return;
         }
+
         if (!callInfo['callerid']) {
-            reject("getB24callUuid No callerID provided!");
+            reject("createB24callInfo No callerID provided!");
             return;
         }
 
         let requestURL = callInfo['url'] + "/telephony.externalcall.register.json?";
             requestURL += "USER_ID=" + callInfo['userID'];
             requestURL += "&PHONE_NUMBER=" + callInfo['callerid'];
-            requestURL += "&TYPE=2";
+            requestURL += "&TYPE=" + callInfo['type'];
             requestURL += "&CRM_CREATE=1";
             requestURL += "&SHOW=0";
 
@@ -47,7 +48,9 @@ let getB24callUuid = (callInfo, cache) => {
             }
 
             if (res.statusCode !== 200) {
-                reject("Server failed to answer with " + res.statusCode + " code");
+                
+                reject("createB24callInfo Server failed to answer with " + res.statusCode + " code");
+                return;
             }
 
             let registeredCall = data.toString();
@@ -55,28 +58,33 @@ let getB24callUuid = (callInfo, cache) => {
             try {
                 registeredCall = JSON.parse(registeredCall);
             } catch (e) {
-                reject("getB24callUuid Answer from server is not JSON");
+                reject("createB24callInfo Answer from server is not JSON");
                 return;
             }
 
             if (typeof registeredCall.result === 'undefined') {
-                reject("getB24callUuid Missing result section in answer");
+                reject("createB24callInfo Missing result section in answer");
                 return;
             }
 
             registeredCall = registeredCall.result;
 
             if (!registeredCall['CALL_ID']) {
-                reject("getB24callUuid Call ID is missing in answer");
+                
+                reject("createB24callInfo Call ID is missing in answer");
                 return;
             }
-            resolve(registeredCall['CALL_ID']);
+
+            resolve({
+                uuid: registeredCall['CALL_ID'],
+                type: callInfo['type'],
+            });
         });
     });
 
-    cache.put('uuid_' + callInfo['callUuid'], b24callUuid, 3 * 60 * 60 * 1000); // Store for 3h
+    cache.put('uuid_' + callInfo['callUuid'] + "_" + callInfo['type'], b24Callnfo, 10800000); // Store for 3h
 
-    return b24callUuid;
+    return b24Callnfo;
 }
 
-module.exports = getB24callUuid;
+module.exports = createB24CallInfo;

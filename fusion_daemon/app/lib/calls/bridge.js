@@ -1,6 +1,6 @@
 const log = require('../../init/logger')(module),
     request = require('urllib'),
-    getB24callUuid = require('../cache/getB24CallUuid'),
+    getB24CallInfo = require('../cache/getB24Call'),
     getEmployeeList = require('../cache/getEmployeeList');
 
 
@@ -51,7 +51,7 @@ let bridge = (headers, cache) => {
     let dialedUser = headers['Other-Leg-Destination-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];
 
-    log("Call was answered by " + dialedUser);
+    log("bridge Call was answered by " + dialedUser);
 
     getEmployeeList(bitrix24Url, cache, (err, employeeList) => {
 
@@ -70,20 +70,28 @@ let bridge = (headers, cache) => {
             userID: employeeList[dialedUser],
             callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
         }
+        
+        // Call function 500 ms after to make sure cache is populated
+        setTimeout(() => {
+            getB24CallInfo(bitrix24Info, cache)
+                .then((b24callInfo) => {
 
-        getB24callUuid(bitrix24Info, cache)
-            .then((b24callUuid) => {
-                bitrix24Info['b24uuid'] = b24callUuid;
-                log("Hiding call screens...");
-                hideCallScreen(bitrix24Info, cache, (err) => {
-                    if (err) {
-                        log("bridge" + err);
+                    bitrix24Info['b24uuid'] = b24callInfo['uuid'];
+                    if (b24callInfo['type'] === 2) { // Processing screens only for inbound calls
+
+                        log("bridge Hiding call screens...");
+
+                        hideCallScreen(bitrix24Info, cache, (err) => {
+                            if (err) {
+                                log("bridge" + err);
+                            }
+                        });
                     }
+                }).catch((err) => {
+                    // If we can't get call UUID - do nothing. Really
+                    log("bridge " + err);
                 });
-            }).catch((err) => {
-                // If we can't get call UUID - do nothing. Really
-                log("bridge " + err);
-            });
+        }, 500);
 
     });
 }

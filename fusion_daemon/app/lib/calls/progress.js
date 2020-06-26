@@ -1,6 +1,6 @@
 const log = require('../../init/logger')(module),
       request = require('urllib'),
-      getB24callUuid = require('../cache/getB24CallUuid'),
+      getB24CallInfo = require('../cache/getB24Call'),
       getEmployeeList = require('../cache/getEmployeeList');
 
 function showCallScreen(bitrix24Info, cache, callback) {
@@ -53,27 +53,29 @@ let progress = (headers, cache) => {
 
         let bitrix24Info = {
             url: bitrix24Url,
-            callerid: headers['Caller-Caller-ID-Number'],
             userID: employeeList[dialedUser],
             callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
         }
+        // Call function 500 ms after to make sure cache is populated
+        setTimeout(() => {
+            getB24CallInfo(bitrix24Info, cache)
+                .then((b24callInfo) => {
+                    if (b24callInfo['type'] === 2) { // Show popup only for incoming calls
 
-        getB24callUuid(bitrix24Info, cache)
-            .then((b24callUuid) => {
-                bitrix24Info['b24uuid'] = b24callUuid;
+                        log("Showing screen to " + dialedUser + "/" + employeeList[dialedUser]);
 
-                log("Showing screen to " + dialedUser + "/" + employeeList[dialedUser]);
-
-                showCallScreen(bitrix24Info, cache, (err) => {
-                    if (err) {
-                        log("showCallScreen failed with " + err);
-                        log(bitrix24Info);
+                        bitrix24Info['b24uuid'] = b24callInfo['uuid'];
+                        showCallScreen(bitrix24Info, cache, (err) => {
+                            if (err) {
+                                log("showCallScreen failed with " + err);
+                            }
+                        });
                     }
+                }).catch((err) => {
+                    // If we can't get call UUID - do nothing. Really
+                    log("getB24CallInfo failed with " + err);
                 });
-            }).catch((err) => {
-                // If we can't get call UUID - do nothing. Really
-                log("getB24callUuid failed with " + err);
-            });
+        }, 500);
     });
 }
 
