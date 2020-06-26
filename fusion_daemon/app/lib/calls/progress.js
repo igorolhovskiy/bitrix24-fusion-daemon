@@ -17,7 +17,7 @@ function showCallScreen(bitrix24Info, cache, callback) {
             usersWatchingScreen = JSON.parse(usersWatchingScreen);
             usersWatchingScreen.push(bitrix24Info['userID']);
         }
-        cache.put('showscreen_' + bitrix24Info['b24uuid'], JSON.stringify(usersWatchingScreen), 10800);
+        cache.put('showscreen_' + bitrix24Info['b24uuid'], JSON.stringify(usersWatchingScreen), 3 * 60 * 60 * 1000); // Store for 3h
     } catch (e) {
         callback(e);
         return;
