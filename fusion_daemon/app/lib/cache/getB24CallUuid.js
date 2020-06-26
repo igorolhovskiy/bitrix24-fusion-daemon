@@ -74,7 +74,7 @@ let getB24callUuid = (callInfo, cache) => {
         });
     });
 
-    cache.put('uuid_' + callInfo['callUuid'], b24callUuid, 10800); // Store for 3h
+    cache.put('uuid_' + callInfo['callUuid'], b24callUuid, 3 * 60 * 60 * 1000); // Store for 3h
 
     return b24callUuid;
 }
