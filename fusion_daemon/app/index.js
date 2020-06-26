@@ -28,7 +28,7 @@ freeswitch
         if (typeof(headers['variable_bitrix24_url']) === 'undefined' || headers['variable_bitrix24_url'] === '') {
             return;
         }
-        //callHangup(headers);
+        callHangup(headers, cache);
     })
     .on('esl::event::CHANNEL_CREATE::*', function(e) {
         let headers = headersProcess(e.headers);

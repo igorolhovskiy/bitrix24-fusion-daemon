@@ -1,6 +1,6 @@
 const log = require('../../init/logger')(module),
-      createB24Call = require('../cache/createB24Call'),
-      getEmployeeList = require('../cache/getEmployeeList');
+      createB24Call = require('../bitrix/createB24Call'),
+      getEmployeeList = require('../bitrix/getEmployeeList');
 
 let create = (headers, cache) => {
 
