@@ -36,24 +36,26 @@ let bridge = (headers, cache) => {
         
         // Call function 500 ms after to make sure cache is populated
         setTimeout(() => {
-            getB24CallInfo(bitrix24Info, cache)
-                .then((b24callInfo) => {
+            getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
+                legInfo
+                    .then((b24callInfo) => {
 
-                    bitrix24Info['b24uuid'] = b24callInfo['uuid'];
-                    if (b24callInfo['type'] === 2) { // Processing screens only for inbound calls
+                        bitrix24Info['b24uuid'] = b24callInfo['uuid'];
+                        if (b24callInfo['type'] === 2) { // Processing screens only for inbound calls
 
-                        log("bridge Hiding call screens...");
+                            log("bridge Hiding call screens...");
 
-                        hideCallScreen(bitrix24Info, cache, (err) => {
-                            if (err) {
-                                log("bridge" + err);
-                            }
-                        });
-                    }
-                }).catch((err) => {
-                    // If we can't get call UUID - do nothing. Really
-                    log("bridge " + err);
-                });
+                            hideCallScreen(bitrix24Info, cache, (err) => {
+                                if (err) {
+                                    log("bridge" + err);
+                                }
+                            });
+                        }
+                    }).catch((err) => {
+                        // If we can't get call UUID - do nothing. Really
+                        log("bridge " + err);
+                    });
+            })
         }, 500);
 
     });

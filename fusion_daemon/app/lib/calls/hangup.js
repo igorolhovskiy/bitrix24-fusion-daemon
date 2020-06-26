@@ -1,52 +1,28 @@
 const log = require('../../init/logger')(module),
-    request = require('urllib'),
     getB24CallInfo = require('../bitrix/getB24Call'),
-    getEmployeeList = require('../bitrix/getEmployeeList');
+    getEmployeeList = require('../bitrix/getEmployeeList'),
+    hideCallScreen = require('../bitrix/hideCallScreen');
 
 
-function hideCallScreen(bitrix24Info, cache, callback) {
+let hangup = (headers, cache) => {
 
-    // Save all showCallScreens to database
-
-    let usersWatchingScreen = cache.get('showscreen_' + bitrix24Info['b24uuid']);
-
-    if (!usersWatchingScreen) {
-        log('hideCallScreen No users are watching this call, skipping...');
-        callback(null);
-        return;
-    }
-    try {
-        usersWatchingScreen = JSON.parse(usersWatchingScreen);
-    } catch (e) {
-        callback(e);
-        return;
+    let bitrix24Info = {
+        callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
     }
 
-    usersWatchingScreen.forEach((user) => {
-        if (user !== bitrix24Info['userID']) {
-
-            let requestURL = bitrix24Info['url'] + "/telephony.externalcall.hide?";
-                requestURL += "USER_ID=" + user;
-                requestURL += "&CALL_ID=" + bitrix24Info['b24uuid'];
-            
-            request.request(requestURL, (err) => {
-                if (err) {
-                    log("hideCallScreen " + err);
-                }
+    getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
+        legInfo
+            .then((b24callInfo) => {
+                log("We are aware of this call, clearing cache...");
+                cache.del("uuid_" + bitrix24Info['callUuid'] + "_" + b24callInfo['uuid']);
+                log(headers, null, 2);
+            })
+            .catch((err) => {
+                log("Hangup: " + err);
             });
-        }
     });
 
-    callback(null);
-}
-
-let bridge = (headers, cache) => {
-
-    if (typeof(headers['Other-Leg-Destination-Number']) == 'undefined') {
-        log("Other-Leg-Destination-Number is not set!");
-        log(JSON.stringify(headers, null, 2));
-        return;
-    }
+    return;
 
     let dialedUser = headers['Other-Leg-Destination-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];
@@ -96,4 +72,4 @@ let bridge = (headers, cache) => {
     });
 }
 
-module.exports = bridge;
+module.exports = hangup;

@@ -11,21 +11,27 @@ let getB24CallInfo = (callInfo, cache) => {
         });
     }
 
-    let b24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_1");
-    if (b24CallInfo) {
-        log("getB24CallInfo Outbound call is exists in cache, returning...");
-        return b24CallInfo;
+    let b24CallInfo = [];
+
+    let tmpB24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_1");
+    if (tmpB24CallInfo) {
+        log("getB24CallInfo Outbound call is exists in cache, adding...");
+        b24CallInfo.push(tmpB24CallInfo);
     }
 
-    b24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_2");
-    if (b24CallInfo) {
-        log("getB24CallInfo Inbound call is exists in cache, returning...");
-        return b24CallInfo;
+    tmpB24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_2");
+    if (tmpB24CallInfo) {
+        log("getB24CallInfo Inbound call is exists in cache, adding...");
+        b24CallInfo.push(tmpB24CallInfo);
     }
 
-    return new Promise((resolve, reject) => {
-        reject("getB24CallInfo No Bitrix info for this call");
-    });
+    if (b24CallInfo.length === 0) {
+        b24CallInfo.push(new Promise((resolve, reject) => {
+            reject("getB24CallInfo No Bitrix info for this call");
+        }));
+    }
+
+    return b24CallInfo;
 }
 
 module.exports = getB24CallInfo;
