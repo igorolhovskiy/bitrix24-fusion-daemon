@@ -13,6 +13,7 @@ services:
     environment:
       NODE_ENV: development
       DEBUG: "true"
+      REST_ENTRYPOINT: "sro7d1v0twh44bte"
     network_mode: host
 
 volumes:
