@@ -16,12 +16,14 @@ let bridge = (headers, cache) => {
 
     log("bridge Call was answered by " + dialedUser);
 
-    getB24EmployeeList(bitrix24Url, cache, (err, employeeList) => {
+    getB24EmployeeList(bitrix24Url, cache, (err, res) => {
 
         if (err) {
             log("bridge Cannot get employeeList: " + err);
             return;
         }
+
+        let employeeList = res['phone_to_id'];
 
         if (typeof employeeList[dialedUser] === 'undefined') {
             log("bridge: User with extension " + dialedUser + " not found");

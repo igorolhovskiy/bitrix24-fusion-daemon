@@ -3,5 +3,5 @@ module.exports = {
     restEntryPoint: (typeof process.env.REST_ENTRYPOINT === 'undefined') ? false : process.env.REST_ENTRYPOINT,
     restPort:  (typeof process.env.REST_PORT === 'undefined') ? 3000 : process.env.REST_PORT,
     restToken: (typeof process.env.REST_TOKEN === 'undefined') ? process.env.REST_ENTRYPOINT : process.env.REST_TOKEN,
-    restDomain: (typeof process.env.REST_DOMAIN === 'undefined') ? "" : process.env.REST_DOMAIN,
+    restRequestDomain: (typeof process.env.REST_REQUESTDOMAIN === 'undefined') ? "" : process.env.REST_REQUESTDOMAIN,
 };

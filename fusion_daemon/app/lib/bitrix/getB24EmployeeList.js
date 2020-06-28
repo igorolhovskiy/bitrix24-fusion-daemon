@@ -1,6 +1,11 @@
 const log = require('../../init/logger')(module),
     request = require('urllib');
 
+
+// Returning format
+// [{extension_1: userid_1}, {extension_2: userid_2}, ... , {extension_n: userid_n}]
+//
+
 function getB24EmployeeList(bitrixURL, cache, callback) {
     
     let employeeList = cache.get('employeeList');
@@ -42,7 +47,10 @@ function getB24EmployeeList(bitrixURL, cache, callback) {
 
         userList = userList.result;
 
-        employeeList = {};
+        employeeList = {
+            'phone_to_id': {},
+            'id_to_phone' : {}
+        };
 
         for (let user in userList) {
 
@@ -54,7 +62,8 @@ function getB24EmployeeList(bitrixURL, cache, callback) {
                 log("Strange, we have a user without ID: " + JSON.stringify(user));
                 continue;
             }
-            employeeList[userList[user].UF_PHONE_INNER] = userList[user].ID;
+            employeeList['phone_to_id'][userList[user].UF_PHONE_INNER] = userList[user].ID;
+            employeeList['id_to_phone'][userList[user].ID] = userList[user].UF_PHONE_INNER;
         }
 
         log("Saving employeeList to cache");
