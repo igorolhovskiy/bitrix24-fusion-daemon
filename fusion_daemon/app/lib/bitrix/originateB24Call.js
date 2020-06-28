@@ -95,7 +95,7 @@ let originateB24Call = (requestBody, cache, callback) => {
                 callback("originateB24Call Fusion failed to answer with " + res.statusCode + " code");
                 return;
             }
-            callback(null, data.toString());
+            callback(null, "originateB24Call " + data.toString());
         });
     });
 }
