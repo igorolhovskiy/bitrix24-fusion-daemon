@@ -13,7 +13,9 @@ services:
     environment:
       NODE_ENV: development
       DEBUG: "true"
+      BITRIX_URL: "https://crm.305plasticsurgery.com/rest/1/sro7d1v0twh44bte"
       REST_ENTRYPOINT: "sro7d1v0twh44bte"
+
     network_mode: host
 
 volumes:
