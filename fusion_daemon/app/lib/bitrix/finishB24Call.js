@@ -27,10 +27,30 @@ let finishB24Call = (callInfo, cache) => {
         }
 
         if (res.statusCode !== 200) {
-            log("finishB24Call Server failed to answer with " + res.statusCode + " code");
+            log("Server failed to answer with " + res.statusCode + " code");
             return;
         }
-        log("Call registration finished with with " + data.toString());
+
+        let finishCall = null;
+
+        try {
+            finishCall = JSON.parse(data.toString());
+        } catch (e) {
+            log("Answer from server is not JSON");
+            return;
+        }
+
+        if (typeof finishCall.result === 'undefined') {
+            log("Missing result section in answer");
+            return;
+        }
+
+        if (finishCall.result['CALL_ID']) {
+            log('Call ' + finishCall.result['CALL_ID'] + ' successfully registered');
+            return;
+        }
+
+        log("Call registration failed with " + JSON.stringify(finishCall, null, 2));
     });
 }
 
