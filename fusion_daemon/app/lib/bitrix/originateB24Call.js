@@ -26,16 +26,11 @@
 
 const log = require('../../init/logger')(module),
     bitrixConfig = require('../../config/bitrix'),
+    fusionConfig = require('../../config/fusion'),
     getB24EmployeeList = require('./getB24EmployeeList'),
-
-    originateCall = require('../calls/originate');
+    request = require('urllib');
 
 let originateB24Call = (requestBody, cache, callback) => {
-
-    if (!requestBody.domain) {
-        callback("originateB24Call Domain is not specified", null);
-        return;
-    }
 
     if (requestBody.event !== "ONEXTERNALCALLSTART") {
         callback("originateB24Call Request event is not ONEXTERNALCALLSTART", null);
@@ -50,6 +45,16 @@ let originateB24Call = (requestBody, cache, callback) => {
 
     if (requestBody.auth.application_token !== bitrixConfig.restToken) {
         callback("originateB24Call Auth token is invalid");
+        return;
+    }
+
+    if (!fusionConfig.apiKey) {
+        callback("originateB24Call Fusion API key is not specified");
+        return;
+    }
+
+    if (!fusionConfig.domain) {
+        callback("originateB24Call Fusion domain name is not specified");
         return;
     }
 
@@ -74,16 +79,10 @@ let originateB24Call = (requestBody, cache, callback) => {
             return;
         }
 
-        let dialInfo = {
-            caller : employeeList[userID],
-            domain: requestBody.domain,
-            callee: requestBody.data['PHONE_NUMBER']
-                || requestBody.data['PHONE_NUMBER_INTERNATIONAL']
-        }
+        let caller = employeeList[userID],
+            callee = requestBody.data['PHONE_NUMBER']
+                || requestBody.data['PHONE_NUMBER_INTERNATIONAL'];
 
-        originateCall(dialInfo, (err, res) => {
-
-        });
     });
 }
 
