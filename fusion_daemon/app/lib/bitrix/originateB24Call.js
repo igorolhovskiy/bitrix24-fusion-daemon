@@ -79,10 +79,24 @@ let originateB24Call = (requestBody, cache, callback) => {
             return;
         }
 
-        let caller = employeeList[userID],
-            callee = requestBody.data['PHONE_NUMBER']
-                || requestBody.data['PHONE_NUMBER_INTERNATIONAL'];
+        let requestUrl = fusionConfig.transport 
+                + "://" + fusionConfig.domain 
+                + "/" + fusionConfig.c2cPath
+                + "&key=" + fusionConfig.apiKey
+                + "&src=" +  employeeList[userID]
+                + "&dst=" + requestBody.data['PHONE_NUMBER'] || requestBody.data['PHONE_NUMBER_INTERNATIONAL'];
 
+        request.request(requestURL, (err, data, res) => {
+            if (err) {
+                callback("originateB24Call " + err);
+                return;
+            }
+            if (res.statusCode !== 200) {
+                callback("originateB24Call Fusion failed to answer with " + res.statusCode + " code");
+                return;
+            }
+            callback(null, data.toString());
+        });
     });
 }
 

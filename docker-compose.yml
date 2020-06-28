@@ -15,6 +15,8 @@ services:
       DEBUG: "true"
       BITRIX_URL: "https://crm.305plasticsurgery.com/rest/1/sro7d1v0twh44bte"
       REST_ENTRYPOINT: "sro7d1v0twh44bte"
+      FUSION_APIKEY: "4831cd14-7b59-4428-ad76-f5b55424fd3f"
+      FUSION_DOMAIN: "swaypc.extensivex.com"
 
     network_mode: host
 
