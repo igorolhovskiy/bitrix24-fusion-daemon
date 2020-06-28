@@ -13,6 +13,7 @@ const cache = require('memory-cache'),
     callHangup = require('./lib/calls/hangup'),
 
     bitrixConfig = require('./config/bitrix'),
+    fusionConfig = require('./config/fusion'),
     originateB24Call = require('./lib/bitrix/originateB24Call');
 
 
@@ -52,9 +53,7 @@ if (bitrixConfig.url) {
         restHTTPServer.set('x-powered-by', false);
         restHTTPServer.use(bodyParser.urlencoded({ extended: true }));
 
-        restHTTPServer.post('/rest/1/' + bitrixConfig.restEntryPoint + "/:domain", (req, res) => {
-
-            req.body['domain'] = req.params.domain;
+        restHTTPServer.post('/rest/1/' + bitrixConfig.restEntryPoint, (req, res) => {
 
             originateB24Call(req.body, cache, (err, data) => {
                 if (err) {
@@ -88,7 +87,7 @@ if (bitrixConfig.url) {
         });
 
         restHTTPServer.listen(bitrixConfig.restPort, () => {
-            log("restHTTPServer service listening on /rest/1/" + bitrixConfig.restEntryPoint + "/<domain_name>:" + bitrixConfig.restPort);
+            log("restHTTPServer service listening on /rest/1/" + bitrixConfig.restEntryPoint + ":" + bitrixConfig.restPort);
         });
     }
 
