@@ -17,11 +17,14 @@ let hangup = (headers, cache) => {
                 bitrix24Info['b24uuid'] = b24callInfo['uuid'];
                 bitrix24Info['userID'] = b24callInfo['userID'];
 
-                bitrix24Info['sip_code'] = headers['variable_sip_term_status'] || headers['variable_proto_specific_hangup_cause'];
+                bitrix24Info['sip_code'] = headers['variable_sip_term_status'] || headers['variable_proto_specific_hangup_cause'] || headers['variable_sip_invite_failure_status'];
                 if (!bitrix24Info['sip_code']) {
+                    log("Cannot get correct hangup code, using 486");
                     log(headers);
                     bitrix24Info['sip_code'] = "486";
                 }
+                bitrix24Info['sip_code'] = bitrix24Info['sip_code'].replace('sip:200', '');
+
                 bitrix24Info['duration'] = headers['variable_billsec'] || "0";
 
                 let dialedUser = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
