@@ -46,7 +46,7 @@ if (bitrixConfig.url) {
 
 
     if (bitrixConfig.restEntryPoint) {
-        // Click 2 call entrypoint is declared
+        // Click 2 Call entrypoint is declared
         const restHTTPServer = express();
 
         restHTTPServer.set('x-powered-by', false);
@@ -56,7 +56,7 @@ if (bitrixConfig.url) {
 
             req.body['domain'] = req.params.domain;
 
-            originateB24Call(req.body, cache, freeswitch, (err, data) => {
+            originateB24Call(req.body, cache, (err, data) => {
                 if (err) {
                     res.json({
                         status: "500",

@@ -34,7 +34,9 @@ let hangup = (headers, cache) => {
                 let dialedUser = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
 
                 if (b24callInfo['type'] === 2)  {// Get user for inbound call
-                    dialedUser = headers['last_sent_callee_id_number'] || headers['Other-Leg-Destination-Number'] || headers['variable_dialed_user'];
+                    dialedUser = headers['last_sent_callee_id_number'] 
+                        || headers['Other-Leg-Destination-Number'] 
+                        || headers['variable_dialed_user'];
                 }
 
                 getB24EmployeeList(bitrix24Info['url'], cache, (err, res) => {
@@ -48,12 +50,10 @@ let hangup = (headers, cache) => {
                     }
 
                     finishB24Call(bitrix24Info, cache);
-                })
-
-
+                });
             })
             .catch(err => {
-                log("Hangup: " + err);
+                log(err);
             });
     });
 }

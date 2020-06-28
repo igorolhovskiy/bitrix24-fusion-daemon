@@ -26,9 +26,11 @@
 
 const log = require('../../init/logger')(module),
     bitrixConfig = require('../../config/bitrix'),
-    getB24EmployeeList = require('./getB24EmployeeList');
+    getB24EmployeeList = require('./getB24EmployeeList'),
 
-let originateB24Call = (requestBody, cache, freeswitch, callback) => {
+    originateCall = require('../calls/originate');
+
+let originateB24Call = (requestBody, cache, callback) => {
 
     if (!requestBody.domain) {
         callback("originateB24Call Domain is not specified", null);
@@ -42,12 +44,12 @@ let originateB24Call = (requestBody, cache, freeswitch, callback) => {
     }
 
     if (requestBody.auth.domain !== bitrixConfig.restRequestDomain) {
-        callback("originateB24Call Domain is not authorized", null);
+        callback("originateB24Call Domain is not authorized");
         return;
     }
 
     if (requestBody.auth.application_token !== bitrixConfig.restToken) {
-        callback("originateB24Call Auth token is invalid", null);
+        callback("originateB24Call Auth token is invalid");
         return;
     }
 
@@ -55,19 +57,33 @@ let originateB24Call = (requestBody, cache, freeswitch, callback) => {
     let userID = requestBody.data['USER_ID'];
 
     if (!userID) {
-        callback("originateB24Call USER_ID is missing", null);
+        callback("originateB24Call USER_ID is missing");
         return;
     }
 
     getB24EmployeeList(bitrixConfig.url, cache, (err, res) => {
         if (err) {
-            callback(err);
+            callback("originateB24Call" + err);
             return;
         }
 
         let employeeList = res['id_to_phone'];
 
-        if (!employeeList[userID]) {}
+        if (!employeeList[userID]) {
+            callback("originateB24Call user " + userID + " does not have extension");
+            return;
+        }
+
+        let dialInfo = {
+            caller : employeeList[userID],
+            domain: requestBody.domain,
+            callee: requestBody.data['PHONE_NUMBER']
+                || requestBody.data['PHONE_NUMBER_INTERNATIONAL']
+        }
+
+        originateCall(dialInfo, (err, res) => {
+
+        });
     });
 }
 
