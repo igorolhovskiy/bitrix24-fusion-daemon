@@ -37,7 +37,10 @@ let hangup = (headers, cache) => {
                     dialedUser = headers['last_sent_callee_id_number'] || headers['Other-Leg-Destination-Number'] || headers['variable_dialed_user'];
                 }
 
-                getB24EmployeeList(bitrix24Info['url'], cache, (err, employeeList) => {
+                getB24EmployeeList(bitrix24Info['url'], cache, (err, res) => {
+                    
+                    let employeeList = res['phone_to_id'];
+
                     // We did get user from request.
                     if (employeeList[dialedUser]) {
                         log("User with extension " + dialedUser + " found, using it");

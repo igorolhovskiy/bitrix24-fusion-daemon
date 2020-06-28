@@ -9,12 +9,13 @@ let progress = (headers, cache) => {
     let dialedUser = headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];
 
-    getB24EmployeeList(bitrix24Url, cache, (err, employeeList) => {
-
+    getB24EmployeeList(bitrix24Url, cache, (err, res) => {
         if (err) {
             log("Cannot get employeeList: " + err);
             return;
         }
+
+        let employeeList = res['phone_to_id'];
 
         if (typeof employeeList[dialedUser] === 'undefined') {
             log("User with extension " + dialedUser + " not found");

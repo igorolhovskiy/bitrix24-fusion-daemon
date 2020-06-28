@@ -52,7 +52,9 @@ if (bitrixConfig.url) {
         restHTTPServer.set('x-powered-by', false);
         restHTTPServer.use(bodyParser.urlencoded({ extended: true }));
 
-        restHTTPServer.post('/rest/1/' + bitrixConfig.restEntryPoint, (req, res) => {
+        restHTTPServer.post('/rest/1/' + bitrixConfig.restEntryPoint + "/:domain", (req, res) => {
+
+            req.body['domain'] = req.params.domain;
 
             originateB24Call(req.body, cache, freeswitch, (err, data) => {
                 if (err) {
@@ -70,8 +72,15 @@ if (bitrixConfig.url) {
             });
         });
 
+        restHTTPServer.all("/*", (req, res) => {
+            res.json({
+                status: "200",
+                message: "PONG"
+            });
+        });
+
         restHTTPServer.use(function(err, req, res, next) {
-            log("Error: " + req);
+            log("restHTTPServer Error: " + err);
             res.json({
                 status: "500",
                 message: err && err.message
@@ -79,11 +88,11 @@ if (bitrixConfig.url) {
         });
 
         restHTTPServer.listen(bitrixConfig.restPort, () => {
-            log("REST service listening on /rest/1/" + bitrixConfig.restEntryPoint + ":" + bitrixConfig.restPort);
+            log("restHTTPServer service listening on /rest/1/" + bitrixConfig.restEntryPoint + "/<domain_name>:" + bitrixConfig.restPort);
         });
     }
 
-    log('VFusion daemon started');
+    log('Bitrix24 - Freeswitch daemon started');
 } else {
     log('Bitrix24 URL is not specified, exiting');
 }
