@@ -6,12 +6,12 @@ function getB24EmployeeList(bitrixURL, cache, callback) {
     let employeeList = cache.get('employeeList');
 
     if (employeeList) {
-        log("getB24EmployeeList Got data from cache!");
+        log("Got data from cache!");
         callback(null, employeeList);
         return;
     }
 
-    log("getB24EmployeeList Cache is empty, getting data from server...");
+    log("Cache is empty, getting data from server...");
 
     let requestURL = bitrixURL + "/user.get.json?USER_TYPE=employee";
 
@@ -23,7 +23,7 @@ function getB24EmployeeList(bitrixURL, cache, callback) {
         }
 
         if (res.statusCode !== 200) {
-            callback(true, "Server failed to answer with " + res.statusCode + " code");
+            callback(true, "getB24EmployeeList Server failed to answer with " + res.statusCode + " code");
         }
 
         let userList = data.toString();
@@ -31,12 +31,12 @@ function getB24EmployeeList(bitrixURL, cache, callback) {
         try {
             userList = JSON.parse(userList);
         } catch (e) {
-            callback(true, "Answer from server is not JSON");
+            callback(true, "getB24EmployeeList Answer from server is not JSON");
             return;
         }
 
         if (typeof userList.result === 'undefined') {
-            callback(true, "Missing result section in answer");
+            callback(true, "getB24EmployeeList Missing result section in answer");
             return;
         }
 

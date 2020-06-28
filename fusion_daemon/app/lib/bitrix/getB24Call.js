@@ -3,7 +3,7 @@ const log = require('../../init/logger')(module);
 
 let getB24CallInfo = (callInfo, cache) => {
 
-    log("getB24CallInfo Getting info for " + callInfo['callUuid']);
+    log("Getting info for " + callInfo['callUuid']);
 
     if (typeof callInfo['callUuid'] === "undefined") {
         return new Promise((resolve, reject) => {
@@ -15,13 +15,13 @@ let getB24CallInfo = (callInfo, cache) => {
 
     let tmpB24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_1");
     if (tmpB24CallInfo) {
-        log("getB24CallInfo Outbound call is exists in cache, adding...");
+        log("Outbound call is exists in cache, adding...");
         b24CallInfo.push(tmpB24CallInfo);
     }
 
     tmpB24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_2");
     if (tmpB24CallInfo) {
-        log("getB24CallInfo Inbound call is exists in cache, adding...");
+        log("Inbound call is exists in cache, adding...");
         b24CallInfo.push(tmpB24CallInfo);
     }
 
