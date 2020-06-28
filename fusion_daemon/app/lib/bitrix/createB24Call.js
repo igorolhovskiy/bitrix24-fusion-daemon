@@ -6,13 +6,13 @@ let createB24CallInfo = (callInfo, cache) => {
 
     if (!callInfo['callUuid']) {
         return new Promise((resolve, reject) => {
-            reject("No UUID provided!");
+            reject("createB24callInfo No UUID provided!");
         });
     }
 
     let b24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_" + callInfo['type']);
     if (b24CallInfo) {
-        log("createB24CallInfo Call is exists in cache, returning...");
+        log("Call is exists in cache, returning...");
         return b24CallInfo;
     }
 

@@ -8,7 +8,7 @@ let hideCallScreen = (bitrix24Info, cache, callback) => {
     let usersWatchingScreen = cache.get('showscreen_' + bitrix24Info['b24uuid']);
 
     if (!usersWatchingScreen) {
-        log('hideCallScreen No users are watching this call, skipping...');
+        log('No users are watching this call, skipping...');
         callback(null);
         return;
     }
@@ -28,7 +28,7 @@ let hideCallScreen = (bitrix24Info, cache, callback) => {
             
             request.request(requestURL, (err) => {
                 if (err) {
-                    log("hideCallScreen " + err);
+                    log(err);
                 }
             });
         }

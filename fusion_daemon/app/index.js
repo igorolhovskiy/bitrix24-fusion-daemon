@@ -54,7 +54,7 @@ if (bitrixConfig.url) {
 
         restHTTPServer.post('/rest/1/' + bitrixConfig.restEntryPoint, (req, res) => {
 
-            originateB24Call(req.body, cache, freeswitch, (err, res) => {
+            originateB24Call(req.body, cache, freeswitch, (err, data) => {
                 if (err) {
                     res.json({
                         status: "500",
@@ -65,7 +65,7 @@ if (bitrixConfig.url) {
 
                 res.json({
                     status: "200",
-                    message: res
+                    message: data
                 });
             });
         });
