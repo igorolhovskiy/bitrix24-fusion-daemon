@@ -57,6 +57,7 @@ if (bitrixConfig.url) {
 
             originateB24Call(req.body, cache, (err, data) => {
                 if (err) {
+                    log(err);
                     res.json({
                         status: "500",
                         message: err
@@ -64,6 +65,7 @@ if (bitrixConfig.url) {
                     return;
                 }
 
+                log("Originate result: " + data);
                 res.json({
                     status: "200",
                     message: data
