@@ -13,12 +13,12 @@ let originateB24Call = (requestBody, cache, callback) => {
     }
 
     if (requestBody.auth.domain !== bitrixConfig.restRequestDomain) {
-        callback("originateB24Call Domain is not authorized");
+        callback("originateB24Call Domain " + requestBody.auth.domain + " is not authorized");
         return;
     }
 
     if (requestBody.auth.application_token !== bitrixConfig.restToken) {
-        callback("originateB24Call Auth token is invalid");
+        callback("originateB24Call Auth token " + requestBody.auth.application_token + " is invalid");
         return;
     }
 
@@ -53,14 +53,24 @@ let originateB24Call = (requestBody, cache, callback) => {
             return;
         }
 
-        let requestUrl = fusionConfig.transport 
+        let caller = employeeList[userID];
+        let callee =requestBody.data['PHONE_NUMBER'] || requestBody.data['PHONE_NUMBER_INTERNATIONAL'];
+
+        let requestURL = fusionConfig.transport 
                 + "://" + fusionConfig.domain 
                 + "/" + fusionConfig.c2cPath
-                + "&key=" + fusionConfig.apiKey
-                + "&src=" +  employeeList[userID]
-                + "&dst=" + requestBody.data['PHONE_NUMBER'] || requestBody.data['PHONE_NUMBER_INTERNATIONAL'];
+                + "?key=" + fusionConfig.apiKey
+                + "&src=" +  caller
+                + "&dest=" + callee;
+        
+        let requestOptions = {
+            'method' : 'POST',
+            'followRedirect' : true,
+            'timeout' : [30000, 30000],
+        }
 
-        request.request(requestURL, (err, data, res) => {
+        log("Making a call " + caller + "@" + fusionConfig.domain + " -> " + callee);
+        request.request(requestURL, requestOptions, (err, data, res) => {
             if (err) {
                 callback("originateB24Call " + err);
                 return;
