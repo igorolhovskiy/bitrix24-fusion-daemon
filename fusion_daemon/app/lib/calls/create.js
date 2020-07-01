@@ -33,6 +33,7 @@ let create = (headers, cache) => {
             let bitrix24Info = {
                 url: bitrix24Url,
                 callerid: legANumber,
+                calleeid: legBNumber,
                 userID: employeeList[legBNumber],
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
                 type: 2 // 1 - outbound, 2 - inbound.
@@ -52,6 +53,7 @@ let create = (headers, cache) => {
             let bitrix24Info = {
                 url: bitrix24Url,
                 callerid: legBNumber,
+                calleeid: legANumber,
                 userID: employeeList[legANumber],
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
                 type: 1 // 1 - outbound, 2 - inbound.
