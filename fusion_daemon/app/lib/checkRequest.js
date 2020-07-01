@@ -1,5 +1,5 @@
-const bitrixConfig = require('../config/bitrix'),
-    headersProcess = require('../init/fsheadersprocess');
+const bitrixConfig = require('app/config/bitrix'),
+    headersProcess = require('app/init/fsheadersprocess');
 
 
 let checkRequest = (rawHeaders) => {
@@ -12,6 +12,7 @@ let checkRequest = (rawHeaders) => {
         return false;
     }
     headers['variable_bitrix24_url'] = bitrixConfig.url;
+
     return headers;
 }
 

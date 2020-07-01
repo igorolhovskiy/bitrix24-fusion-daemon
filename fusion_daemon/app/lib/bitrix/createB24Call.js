@@ -1,6 +1,6 @@
 
 const request = require('urllib'),
-    log = require('../../init/logger')(module);
+    log = require('app/init/logger')(module);
 
 let createB24CallInfo = (callInfo, cache) => {
 

@@ -1,7 +1,7 @@
-const log = require('../../init/logger')(module),
-    getB24CallInfo = require('../bitrix/getB24Call'),
-    getB24EmployeeList = require('../bitrix/getB24EmployeeList'),
-    hideCallScreen = require('../bitrix/hideCallScreen');
+const log = require('app/init/logger')(module),
+    getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
+    getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
+    hideCallScreen = require('app/lib/bitrix/hideCallScreen');
 
 let bridge = (headers, cache) => {
 
