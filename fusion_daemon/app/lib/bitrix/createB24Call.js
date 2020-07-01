@@ -1,6 +1,8 @@
 
 const request = require('urllib'),
-    log = require('app/init/logger')(module);
+    log = require('app/init/logger')(module),
+    bitrixConfig = require('app/config/bitrix'),
+    fusionConfig = require('app/config/fusion');
 
 let createB24CallInfo = (callInfo, cache) => {
 
@@ -32,11 +34,24 @@ let createB24CallInfo = (callInfo, cache) => {
             return;
         }
 
+        let crmCreate = "1";
+        if (bitrixConfig.createLocalContact === false) {
+            // Check if call is local.
+            if (    callInfo['callerid']
+                    && callInfo['calleeid']
+                    && callInfo['callerid'].length <= fusionConfig.localNumberLength
+                    && callInfo['calleeid'].length <= fusionConfig.localNumberLength) {
+                
+                crmCreate = "0";
+                log("Not creating CRM entity as call " + callInfo['callerid'] + " -> " + callInfo['calleeid'] + " considered local");
+            }
+        }
+
         let requestURL = callInfo['url'] + "/telephony.externalcall.register.json?"
             + "USER_ID=" + callInfo['userID']
             + "&PHONE_NUMBER=" + callInfo['callerid']
             + "&TYPE=" + callInfo['type']
-            + "&CRM_CREATE=1"
+            + "&CRM_CREATE=" + crmCreate
             + "&SHOW=0";
 
         request.request(requestURL, (err, data, res) => {

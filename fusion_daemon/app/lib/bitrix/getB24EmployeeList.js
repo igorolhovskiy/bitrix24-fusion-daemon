@@ -68,7 +68,8 @@ function getB24EmployeeList(bitrixURL, cache, callback) {
         }
 
         log("Saving employeeList to cache");
-        cache.put('employeeList', employeeList, 60 * 60 * 1000); // Store for 1h
+        cache.put('employeeList', employeeList, 1000); // Store for 1 sec
+        //cache.put('employeeList', employeeList, 60 * 60 * 1000); // Store for 1h
 
         callback(null, employeeList);
     });
