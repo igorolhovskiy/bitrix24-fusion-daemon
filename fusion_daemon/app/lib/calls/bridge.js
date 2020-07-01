@@ -1,66 +1,32 @@
-const log = require('../../init/logger')(module),
-    request = require('urllib'),
-    getB24callUuid = require('../cache/getB24CallUuid'),
-    getEmployeeList = require('../cache/getEmployeeList');
+const log = require('app/init/logger')(module),
+    getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
+    getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
+    hideCallScreen = require('app/lib/bitrix/hideCallScreen');
 
+let bridge = (headers, cache) => {
 
-function hideCallScreen(bitrix24Info, callback) {
-
-    // Save all showCallScreens to database
-
-    let usersWatchingScreen = cache.get('showscreen_' + bitrix24Info['b24uuid']);
-
-    if (!usersWatchingScreen) {
-        log('hideCallScreen No users are watching this call, skipping...');
-        callback(null);
-        return;
-    }
-    try {
-        usersWatchingScreen = JSON.parse(usersWatchingScreen);
-    } catch (e) {
-        callback(e);
+    if (typeof(headers['Other-Leg-Destination-Number']) == 'undefined') {
+        log("Other-Leg-Destination-Number is not set!");
+        log(JSON.stringify(headers, null, 2));
         return;
     }
 
-    usersWatchingScreen.forEach((user) => {
-        if (user !== bitrix24Info['userID']) {
-
-            let requestURL = bitrix24Info['url'] + "/telephony.externalcall.hide?";
-                requestURL += "USER_ID=" + user;
-                requestURL += "&CALL_ID=" + bitrix24Info['b24uuid'];
-            
-            request.request(requestURL, (err) => {
-                if (err) {
-                    log("hideCallScreen " + err);
-                }
-            });
-        }
-    });
-
-    callback(null);
-}
-
-let bridge = (headers) => {
-
-    if (typeof(headers['Other-Leg-Callee-ID-Number']) == 'undefined') {
-        log("bridge Other-Leg-Callee-ID-Number is not set!");
-        return;
-    }
-
-    let dialedUser = headers['Other-Leg-Callee-ID-Number'];
+    let dialedUser = headers['variable_callee_id_number'] || headers['Other-Leg-Destination-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];
 
-    log("Call was answered by " + dialedUser);
+    log("bridge Call was answered by " + dialedUser);
 
-    getEmployeeList(bitrix24Url, (err, employeeList) => {
+    getB24EmployeeList(bitrix24Url, cache, (err, res) => {
 
         if (err) {
             log("bridge Cannot get employeeList: " + err);
             return;
         }
 
+        let employeeList = res['phone_to_id'];
+
         if (typeof employeeList[dialedUser] === 'undefined') {
-            log("bridge User with extension " + dialedUser + " not found");
+            log("bridge: User with extension " + dialedUser + " not found");
             return;
         }
 
@@ -69,20 +35,30 @@ let bridge = (headers) => {
             userID: employeeList[dialedUser],
             callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
         }
+        
+        // Call function 500 ms after to make sure cache is populated
+        setTimeout(() => {
+            getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
+                legInfo
+                    .then(b24callInfo => {
+                        bitrix24Info['b24uuid'] = b24callInfo['uuid'];
 
-        getB24callUuid(bitrix24Info, cache)
-            .then((b24callUuid) => {
-                bitrix24Info['b24uuid'] = b24callUuid;
-                log("Hiding call screens...");
-                hideCallScreen(bitrix24Info, (err) => {
-                    if (err) {
-                        log("bridge" + err);
-                    }
-                });
-            }).catch((err) => {
-                // If we can't get call UUID - do nothing. Really
-                log("bridge " + err);
-            });
+                        log("bridge Hiding call screens...");
+
+                        if (b24callInfo['type'] === 2) { // Processing screens only for inbound calls
+
+                            hideCallScreen(bitrix24Info, cache, (err) => {
+                                if (err) {
+                                    log("bridge" + err);
+                                }
+                            });
+                        }
+                    }).catch(err => {
+                        // If we can't get call UUID - do nothing. Really
+                        log("bridge " + err);
+                    });
+            })
+        }, 500);
 
     });
 }
