@@ -6,7 +6,7 @@ const log = require('app/init/logger')(module),
 
 let progress = (headers, cache) => {
 
-    let dialedUser = headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
+    let dialedUser =  headers['variable_callee_id_number'] || headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];
 
     getB24EmployeeList(bitrix24Url, cache, (err, res) => {

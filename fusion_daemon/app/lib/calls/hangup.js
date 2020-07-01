@@ -1,7 +1,8 @@
 const log = require('app/init/logger')(module),
     getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-    finishB24Call = require('app/lib/bitrix/finishB24Call');
+    finishB24Call = require('app/lib/bitrix/finishB24Call'),
+    hangupCauseTable = require('app/config/freeswitch').hangupCause;
 
 let hangup = (headers, cache) => {
 
@@ -22,13 +23,17 @@ let hangup = (headers, cache) => {
                     || headers['variable_sip_invite_failure_status']
                     || headers['variable_last_bridge_proto_specific_hangup_cause'];
 
-                if (!bitrix24Info['sip_code']) {
+                if (!bitrix24Info['sip_code'] || bitrix24Info['sip_code'] === '') {
                     log("Cannot get correct hangup code, using 486");
-                    log(headers);
                     bitrix24Info['sip_code'] = "486";
                 }
-                bitrix24Info['sip_code'] = bitrix24Info['sip_code'].replace('sip:200', '');
+                bitrix24Info['sip_code'] = bitrix24Info['sip_code'].replace('sip:', '');
 
+                // Adjust Click2Call hangup code
+                if (headers['variable_click_to_call'] === 'true') {
+                    bitrix24Info['sip_code'] = hangupCauseTable[headers['variable_bridge_hangup_cause']] || "486";
+
+                }
                 bitrix24Info['duration'] = headers['variable_billsec'] || "0";
 
                 let dialedUser = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
