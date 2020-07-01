@@ -41,7 +41,7 @@ let create = (headers, cache) => {
 
             createB24Call(bitrix24Info, cache)
                 .then((b24callInfo) => {                    
-                    log("Registered inbound call " + bitrix24Info['callUuid'] + " :" + b24callInfo['uuid']);
+                    log("Registered inbound call " + bitrix24Info['callUuid'] + " -> " + b24callInfo['uuid']);
                 }).catch((err) => {
                     // If we can't get call UUID - do nothing. Really
                     log("Registering inbound call " + bitrix24Info['callUuid'] + " failed: " + err);
