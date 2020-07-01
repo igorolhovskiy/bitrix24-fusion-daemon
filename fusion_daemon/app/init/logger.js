@@ -1,4 +1,4 @@
-const options = require('../config/freeswitch');
+const options = require('app/config/freeswitch');
 
 module.exports = module => {
     return function() {

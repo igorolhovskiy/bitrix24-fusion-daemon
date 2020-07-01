@@ -1,6 +1,6 @@
 
 const request = require('urllib'),
-    log = require('../../init/logger')(module);
+    log = require('app/init/logger')(module);
 
 let finishB24Call = (callInfo, cache) => {
 
@@ -28,6 +28,7 @@ let finishB24Call = (callInfo, cache) => {
 
         if (res.statusCode !== 200) {
             log("Server failed to answer with " + res.statusCode + " code");
+            log(requestURL + " -> " + data.toString());
             return;
         }
 

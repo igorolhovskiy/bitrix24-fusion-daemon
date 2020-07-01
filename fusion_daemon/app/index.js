@@ -2,19 +2,18 @@ const cache = require('memory-cache'),
     express = require('express'),
     bodyParser = require('body-parser'),
 
-    log = require('./init/logger')(module),
+    log = require('app/init/logger')(module),
 
-    freeswitch = require('./init/freeswitch'),
-    checkRequest = require('./lib/checkRequest'),
+    freeswitch = require('app/init/freeswitch'),
+    checkRequest = require('app/lib/checkRequest'),
     
-    callRinging = require('./lib/calls/progress'),
-    callAnswer = require('./lib/calls/bridge'),
-    callCreate = require('./lib/calls/create'),
-    callHangup = require('./lib/calls/hangup'),
+    callRinging = require('app/lib/calls/progress'),
+    callAnswer = require('app/lib/calls/bridge'),
+    callCreate = require('app/lib/calls/create'),
+    callHangup = require('app/lib/calls/hangup'),
 
-    bitrixConfig = require('./config/bitrix'),
-    fusionConfig = require('./config/fusion'),
-    originateB24Call = require('./lib/bitrix/originateB24Call');
+    bitrixConfig = require('app/config/bitrix'),
+    originateB24Call = require('app/lib/bitrix/originateB24Call');
 
 
 if (bitrixConfig.url) {

@@ -1,13 +1,23 @@
-const log = require('../../init/logger')(module),
-      createB24Call = require('../bitrix/createB24Call'),
-      getB24EmployeeList = require('../bitrix/getB24EmployeeList');
+const log = require('app/init/logger')(module),
+      createB24Call = require('app/lib/bitrix/createB24Call'),
+      getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList');
 
 let create = (headers, cache) => {
 
     let bitrix24Url = headers['variable_bitrix24_url'];
 
+    // Get correct LegA/LegB numbers
+
     let legBNumber = headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
     let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
+
+    if (headers['Caller-RDNIS'] && headers['Caller-Source'] === 'src/switch_ivr_originate.c') {
+        log("Click2Call initiated call, adjusting legA/B numbers...");
+        legBNumber = legANumber;
+        legANumber = headers['Caller-RDNIS'] || headers['Caller-Caller-ID-Number'];
+    }
+
+    log("Processing call " + legANumber + " -> " + legBNumber);
 
     getB24EmployeeList(bitrix24Url, cache, (err, res) => {
 

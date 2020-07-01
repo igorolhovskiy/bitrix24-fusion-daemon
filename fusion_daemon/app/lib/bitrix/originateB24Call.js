@@ -1,7 +1,7 @@
-const log = require('../../init/logger')(module),
-    bitrixConfig = require('../../config/bitrix'),
-    fusionConfig = require('../../config/fusion'),
-    getB24EmployeeList = require('./getB24EmployeeList'),
+const log = require('app/init/logger')(module),
+    bitrixConfig = require('app/config/bitrix'),
+    fusionConfig = require('app/config/fusion'),
+    getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
     request = require('urllib');
 
 let originateB24Call = (requestBody, cache, callback) => {

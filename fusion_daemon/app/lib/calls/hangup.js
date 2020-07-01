@@ -1,7 +1,7 @@
-const log = require('../../init/logger')(module),
-    getB24CallInfo = require('../bitrix/getB24Call'),
-    getB24EmployeeList = require('../bitrix/getB24EmployeeList'),
-    finishB24Call = require('../bitrix/finishB24Call');
+const log = require('app/init/logger')(module),
+    getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
+    getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
+    finishB24Call = require('app/lib/bitrix/finishB24Call');
 
 let hangup = (headers, cache) => {
 
@@ -15,7 +15,7 @@ let hangup = (headers, cache) => {
             .then(b24callInfo => {
 
                 bitrix24Info['b24uuid'] = b24callInfo['uuid'];
-                bitrix24Info['userID'] = b24callInfo['userID'];
+                bitrix24Info['userID'] = b24callInfo['user'];
 
                 bitrix24Info['sip_code'] = headers['variable_sip_term_status'] 
                     || headers['variable_proto_specific_hangup_cause'] 
