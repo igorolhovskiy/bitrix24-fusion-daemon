@@ -58,8 +58,8 @@ let originateB24Call = (requestBody, cache, callback) => {
 
         let requestURL = fusionConfig.transport 
                 + "://" + fusionConfig.domain 
-                + "/" + fusionConfig.c2cPath
-                + "?key=" + fusionConfig.apiKey
+                + "/" + fusionConfig.c2cPath + "?"
+                + "key=" + fusionConfig.apiKey
                 + "&src=" +  caller
                 + "&dest=" + callee;
         

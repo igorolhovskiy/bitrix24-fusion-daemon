@@ -32,12 +32,12 @@ let createB24CallInfo = (callInfo, cache) => {
             return;
         }
 
-        let requestURL = callInfo['url'] + "/telephony.externalcall.register.json?";
-            requestURL += "USER_ID=" + callInfo['userID'];
-            requestURL += "&PHONE_NUMBER=" + callInfo['callerid'];
-            requestURL += "&TYPE=" + callInfo['type'];
-            requestURL += "&CRM_CREATE=1";
-            requestURL += "&SHOW=0";
+        let requestURL = callInfo['url'] + "/telephony.externalcall.register.json?"
+            + "USER_ID=" + callInfo['userID']
+            + "&PHONE_NUMBER=" + callInfo['callerid']
+            + "&TYPE=" + callInfo['type']
+            + "&CRM_CREATE=1"
+            + "&SHOW=0";
 
         request.request(requestURL, (err, data, res) => {
 

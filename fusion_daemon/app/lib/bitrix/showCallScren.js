@@ -21,9 +21,9 @@ let showCallScreen = (bitrix24Info, cache, callback) => {
         return;
     }
 
-    let requestURL = bitrix24Info['url'] + "/telephony.externalcall.show?";
-        requestURL += "USER_ID=" + bitrix24Info['userID'];
-        requestURL += "&CALL_ID=" + bitrix24Info['b24uuid'];
+    let requestURL = bitrix24Info['url'] + "/telephony.externalcall.show?"
+        + "USER_ID=" + bitrix24Info['userID']
+        + "&CALL_ID=" + bitrix24Info['b24uuid'];
     
     request.request(requestURL, (err) => {
         if (err) {
