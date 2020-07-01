@@ -14,12 +14,12 @@ services:
       NODE_ENV: development
       NODE_PATH: "/opt/"
       DEBUG: "true"
-      BITRIX_URL: "https://crm.305plasticsurgery.com/rest/1/sro7d1v0twh44bte"
-      REST_ENTRYPOINT: "sro7d1v0twh44bte"
-      REST_REQUESTDOMAIN: "crm.305plasticsurgery.com"
-      REST_TOKEN: "25kyj43oj9186r7lt1bcjhbakz9rlr8b"
-      FUSION_APIKEY: "4831cd14-7b59-4428-ad76-f5b55424fd3f"
-      FUSION_DOMAIN: "swaypc.extensivex.com"
+      BITRIX_URL: "XXXXX"
+      REST_ENTRYPOINT: "XXX"
+      REST_REQUESTDOMAIN: "XXX.XXX.XXX"
+      REST_TOKEN: "XXXXX"
+      FUSION_APIKEY: "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+      FUSION_DOMAIN: "XXXXX"
 
     network_mode: host
 
