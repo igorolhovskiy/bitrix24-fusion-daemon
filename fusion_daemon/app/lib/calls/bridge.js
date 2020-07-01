@@ -11,7 +11,7 @@ let bridge = (headers, cache) => {
         return;
     }
 
-    let dialedUser = headers['Other-Leg-Destination-Number'];
+    let dialedUser = headers['variable_callee_id_number'] || headers['Other-Leg-Destination-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];
 
     log("bridge Call was answered by " + dialedUser);

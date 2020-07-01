@@ -8,7 +8,7 @@ let create = (headers, cache) => {
 
     // Get correct LegA/LegB numbers
 
-    let legBNumber = headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
+    let legBNumber = headers['variable_callee_id_number'] || headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
     let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
 
     if (headers['Caller-RDNIS'] && headers['Caller-Source'] === 'src/switch_ivr_originate.c') {
