@@ -18,7 +18,8 @@ function getB24EmployeeList(bitrixURL, cache, callback) {
 
     log("Cache is empty, getting data from server...");
 
-    let requestURL = bitrixURL + "/user.get.json?USER_TYPE=employee";
+    let requestURL = bitrixURL + "/user.get.json?"
+        + "USER_TYPE=employee";
 
     request.request(requestURL, (err, data, res) => {
 
