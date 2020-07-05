@@ -5,4 +5,5 @@ module.exports = {
     restToken: (typeof process.env.REST_TOKEN === 'undefined') ? process.env.REST_ENTRYPOINT : process.env.REST_TOKEN,
     restRequestDomain: (typeof process.env.REST_REQUESTDOMAIN === 'undefined') ? "" : process.env.REST_REQUESTDOMAIN,
     createLocalContact: (typeof process.env.BITRIX_CREATELOCALCONTACT === 'undefined') ? false : (process.env.BITRIX_CREATELOCALCONTACT.toLowerCase() === 'true'),
+    appendRecording: (typeof process.env.BITRIX_APPENDRECORDING === 'undefined') ? true : (process.env.BITRIX_APPENDRECORDING.toLowerCase() !== 'false'),
 };

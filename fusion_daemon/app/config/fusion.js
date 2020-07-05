@@ -4,4 +4,5 @@ module.exports = {
     c2cPath: (typeof process.env.FUSION_C2CPATH === 'undefined') ? '/app/click_to_call/click_to_call.php' : process.env.FUSION_C2CPATH,
     apiKey:  (typeof process.env.FUSION_APIKEY === 'undefined') ? false : process.env.FUSION_APIKEY,
     localNumberLength: (typeof process.env.FUSION_LOCALNUMBERLENGHT === 'undefined') ? 4 : parseInt(process.env.FUSION_LOCALNUMBERLENGHT),
+    localRecordingPath: (typeof process.env.FUSION_LOCALRECORDINGPATH === 'undefined') ? '/var/lib/freeswitch/recordings' : process.env.FUSION_LOCALRECORDINGPATH
 };
