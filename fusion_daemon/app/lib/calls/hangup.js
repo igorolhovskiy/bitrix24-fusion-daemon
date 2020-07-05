@@ -44,6 +44,8 @@ let hangup = (headers, cache) => {
                         || headers['variable_dialed_user'];
                 }
 
+                //let 
+
                 getB24EmployeeList(bitrix24Info['url'], cache, (err, res) => {
                     
                     let employeeList = res['phone_to_id'];
