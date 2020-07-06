@@ -19,14 +19,16 @@ Bitrix Domain - `${REST_REQUESTDOMAIN}`
 
 Some env variables description  
 
+
 `BITRIX_URL` - Where to send Bitrix24 webhook requests. Full path like `https://crm.mycompany.com/rest/1/this_is_my_secret_token`  
 `REST_PORT` - Port on which to listen for Click2Call requests. 3000 by default  
 `REST_ENTRYPOINT` - Outbound webhook for click2call should be like `http://fusion_server:REST_PORT/rest/1/REST_ENTRYPOINT`  
 `REST_REQUESTDOMAIN` - Domain to verify in outbound webhook from Bitrix in `body.auth.domain`  
 `REST_TOKEN` - Token to verify in outbound webhook in `body.auth.application_token`  
 `FUSION_APIKEY` - API Key of user in Fusion with `click_to_call_call` permission  
-`FUSION_DOMAIN` - On which domain we're sending a request for Click2Call.
-`FUSION_RECORDINGPATH` - Actually path to get recording files. For example - `https://fusion_server:8443` See nginx example below for port 8443 and default Fusion recording path
+`FUSION_DOMAIN` - On which domain we're sending a request for Click2Call.  
+`FUSION_RECORDINGPATH` - Actually path to get recording files. For example - `https://fusion_server:8443`   
+    See nginx example below for port 8443 and default Fusion recording path  
 
 
 nginx site example for getting recordings.
