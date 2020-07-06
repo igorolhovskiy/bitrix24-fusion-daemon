@@ -1,10 +1,16 @@
 const log = require('app/init/logger')(module),
       getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
       getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-      showCallScreen = require('app/lib/bitrix/showCallScren');
+      showCallScreen = require('app/lib/bitrix/showCallScren'),
+      bitrix24Config = require('app/config/bitrix');
 
 
 let progress = (headers, cache) => {
+
+    if (!bitrix24Config.showCallNotifications) {
+        log("Call notifications are disabled");
+        return;
+    }
 
     let dialedUser =  headers['variable_callee_id_number'] || headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
     let bitrix24Url = headers['variable_bitrix24_url'];

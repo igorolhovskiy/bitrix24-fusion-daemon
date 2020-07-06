@@ -14,12 +14,13 @@ services:
       NODE_ENV: development
       NODE_PATH: "/opt/"
       DEBUG: "true"
-      BITRIX_URL: "XXXXX"
+      BITRIX_URL: "https://XXXXX"
       REST_ENTRYPOINT: "XXX"
       REST_REQUESTDOMAIN: "XXX.XXX.XXX"
       REST_TOKEN: "XXXXX"
       FUSION_APIKEY: "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
       FUSION_DOMAIN: "XXXXX"
+      FUSION_RECORDINGPATH: "https://XXXX:YYY"
 
     network_mode: host
 

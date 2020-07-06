@@ -1,9 +1,15 @@
 const log = require('app/init/logger')(module),
     getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-    hideCallScreen = require('app/lib/bitrix/hideCallScreen');
+    hideCallScreen = require('app/lib/bitrix/hideCallScreen'),
+    bitrix24Config = require('app/config/bitrix');
 
 let bridge = (headers, cache) => {
+
+    if (!bitrix24Config.showCallNotifications) {
+        log("Call notifications are disabled");
+        return;
+    }
 
     if (typeof(headers['Other-Leg-Destination-Number']) == 'undefined') {
         log("Other-Leg-Destination-Number is not set!");

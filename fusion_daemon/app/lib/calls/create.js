@@ -33,6 +33,7 @@ let create = (headers, cache) => {
             let bitrix24Info = {
                 url: bitrix24Url,
                 callerid: legANumber,
+                calleeid: legBNumber,
                 userID: employeeList[legBNumber],
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
                 type: 2 // 1 - outbound, 2 - inbound.
@@ -40,7 +41,7 @@ let create = (headers, cache) => {
 
             createB24Call(bitrix24Info, cache)
                 .then((b24callInfo) => {                    
-                    log("Registered inbound call " + bitrix24Info['callUuid'] + " :" + b24callInfo['uuid']);
+                    log("Registered inbound call " + bitrix24Info['callUuid'] + " -> " + b24callInfo['uuid']);
                 }).catch((err) => {
                     // If we can't get call UUID - do nothing. Really
                     log("Registering inbound call " + bitrix24Info['callUuid'] + " failed: " + err);
@@ -52,6 +53,7 @@ let create = (headers, cache) => {
             let bitrix24Info = {
                 url: bitrix24Url,
                 callerid: legBNumber,
+                calleeid: legANumber,
                 userID: employeeList[legANumber],
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
                 type: 1 // 1 - outbound, 2 - inbound.

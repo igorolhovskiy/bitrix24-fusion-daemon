@@ -1,7 +1,7 @@
 {
     "name": "bitrix_fusion_daemon",
-    "version": "0.0.1",
-    "description": "Daemon to listen FreeSWITCH Events and send em to Bitrix24 via WebHooks",
+    "version": "0.1.1",
+    "description": "Daemon for Bitrix24 - FusionPBX integration",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
