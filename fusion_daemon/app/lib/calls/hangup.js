@@ -44,7 +44,11 @@ let hangup = (headers, cache) => {
                         || headers['variable_dialed_user'];
                 }
 
-                //let 
+                if (headers['variable_record_path'] && headers['variable_record_name']) {
+                    // We have a record
+                    bitrix24Info['rec_path'] = headers['variable_record_path'];
+                    bitrix24Info['rec_file'] = headers['variable_record_name'];
+                }
 
                 getB24EmployeeList(bitrix24Info['url'], cache, (err, res) => {
                     
