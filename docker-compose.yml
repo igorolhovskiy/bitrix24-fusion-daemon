@@ -20,6 +20,7 @@ services:
       REST_TOKEN: "25kyj43oj9186r7lt1bcjhbakz9rlr8b"
       FUSION_APIKEY: "4831cd14-7b59-4428-ad76-f5b55424fd3f"
       FUSION_DOMAIN: "swaypc.extensivex.com"
+      FUSION_RECORDINGPATH: "https://swaypc.extensivex.com:8443"
 
     network_mode: host
 
