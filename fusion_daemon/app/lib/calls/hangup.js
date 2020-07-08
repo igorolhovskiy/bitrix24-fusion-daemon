@@ -67,7 +67,7 @@ let hangup = (headers, cache) => {
 
                         if (bitrix24Config.showIMNotification && bitrix24Info['sip_code'] !== '200') {
                             let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
-                            bitrix24Info['message'] = "Call from " + headers['caller_id_name'] + " <" + legANumber + "> was missed!";
+                            bitrix24Info['message'] = "Call from " + headers['variable_caller_id_name'] || "" + " <" + legANumber + "> was missed!";
                             notifyB24User(bitrix24Info, cache, (err) => {
                                 if (err) {
                                     log("notifyB24User failed with " + err);

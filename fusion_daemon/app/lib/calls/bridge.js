@@ -56,7 +56,7 @@ let bridge = (headers, cache) => {
 
                             if (bitrix24Config.showIMNotification) {
                                 let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
-                                bitrix24Info['message'] = "Incoming call from " + headers['caller_id_name'] + " <" + legANumber + "> was answered by " + dialedUser;
+                                bitrix24Info['message'] = "Incoming call from " + headers['variable_caller_id_name'] || "" + " <" + legANumber + "> was answered by " + dialedUser;
                                 notifyB24User(bitrix24Info, cache, (err) => {
                                     if (err) {
                                         log("notifyB24User failed with " + err);
