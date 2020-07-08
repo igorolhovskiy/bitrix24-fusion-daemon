@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  app:
+    image: bitrixfusion_daemon:bitrixfusion_daemon
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    restart: always
+    volumes:
+      - ./fusion_daemon:/opt
+      - app_node_modules:/opt/node_modules
+    environment:
+      NODE_ENV: development
+      NODE_PATH: "/opt/"
+      DEBUG: "true"
+      BITRIX_URL: "https://XXXXX"
+      REST_ENTRYPOINT: "XXX"
+      REST_REQUESTDOMAIN: "XXX.XXX.XXX"
+      REST_TOKEN: "XXXXX"
+      FUSION_APIKEY: "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+      FUSION_DOMAIN: "XXXXX"
+      FUSION_RECORDINGPATH: "https://XXXX:YYY"
+
+    network_mode: host
+
+volumes:
+  app_node_modules:
