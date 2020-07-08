@@ -52,33 +52,36 @@ let hangup = (headers, cache) => {
                     bitrix24Info['rec_file'] = headers['variable_record_name'];
                 }
 
-                getB24EmployeeList(bitrix24Info['url'], cache, (err, res) => {
-                    
-                    let employeeList = res['phone_to_id'];
+                getB24EmployeeList(bitrix24Info['url'], cache)
+                    .then(res => {
+                        let employeeList = res['phone_to_id'];
 
                     // We did get user from request.
-                    if (employeeList[dialedUser]) {
-                        log("User with extension " + dialedUser + " found, using it");
-                        bitrix24Info['userID'] = employeeList[dialedUser];
-                    }
-
-                    setTimeout(() => {
-                        finishB24Call(bitrix24Info, cache);
-
-                        if (bitrix24Config.showIMNotification && bitrix24Info['sip_code'] !== '200') {
-                            let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
-                            bitrix24Info['message'] = "Call from " + headers['variable_caller_id_name'] || "" + " <" + legANumber + "> was missed!";
-                            notifyB24User(bitrix24Info, cache, (err) => {
-                                if (err) {
-                                    log("notifyB24User failed with " + err);
-                                }
-                            });
+                        if (employeeList[dialedUser]) {
+                            log("User with extension " + dialedUser + " found, using it");
+                            bitrix24Info['userID'] = employeeList[dialedUser];
                         }
-                    }, 500);
-                });
+
+                        setTimeout(() => {
+                            finishB24Call(bitrix24Info, cache);
+
+                            if (bitrix24Config.showIMNotification && bitrix24Info['sip_code'] !== '200') {
+                                let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
+                                bitrix24Info['message'] = "Call from " + headers['variable_caller_id_name'] || "" + " <" + legANumber + "> was missed!";
+                                notifyB24User(bitrix24Info, cache, (err) => {
+                                    if (err) {
+                                        log("notifyB24User failed with " + err);
+                                    }
+                                });
+                            }
+                        }, 500);
+                    })
+                    .catch(err => {
+                        log("hangup error: " + err);
+                    });
             })
             .catch(err => {
-                log(err);
+                log("hangup error: " + err);
             });
     });
 }

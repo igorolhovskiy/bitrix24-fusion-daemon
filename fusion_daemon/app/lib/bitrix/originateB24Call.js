@@ -41,48 +41,47 @@ let originateB24Call = (requestBody, cache, callback) => {
         return;
     }
 
-    getB24EmployeeList(bitrixConfig.url, cache, (err, res) => {
-        if (err) {
-            callback("originateB24Call" + err);
-            return;
-        }
+    getB24EmployeeList(bitrixConfig.url, cache)
+        .then(res => {
+            let employeeList = res['id_to_phone'];
 
-        let employeeList = res['id_to_phone'];
-
-        if (!employeeList[userID]) {
-            callback("originateB24Call user " + userID + " does not have extension");
-            return;
-        }
-
-        let caller = employeeList[userID];
-        let callee =requestBody.data['PHONE_NUMBER'] || requestBody.data['PHONE_NUMBER_INTERNATIONAL'];
-
-        let requestURL = fusionConfig.transport 
-                + "://" + fusionConfig.domain 
-                + fusionConfig.c2cPath + "?"
-                + "key=" + fusionConfig.apiKey
-                + "&src=" +  caller
-                + "&dest=" + callee;
-        
-        let requestOptions = {
-            'method' : 'POST',
-            'followRedirect' : true,
-            'timeout' : [30000, 30000],
-        }
-
-        log("Making a call " + caller + "@" + fusionConfig.domain + " -> " + callee);
-        request.request(requestURL, requestOptions, (err, data, res) => {
-            if (err) {
-                callback("originateB24Call " + err);
+            if (!employeeList[userID]) {
+                callback("originateB24Call user " + userID + " does not have extension");
                 return;
             }
-            if (res.statusCode !== 200) {
-                callback("originateB24Call Fusion failed to answer with " + res.statusCode + " code");
-                return;
+
+            let caller = employeeList[userID];
+            let callee =requestBody.data['PHONE_NUMBER'] || requestBody.data['PHONE_NUMBER_INTERNATIONAL'];
+
+            let requestURL = fusionConfig.transport 
+                    + "://" + fusionConfig.domain 
+                    + fusionConfig.c2cPath + "?"
+                    + "key=" + fusionConfig.apiKey
+                    + "&src=" +  caller
+                    + "&dest=" + callee;
+            
+            let requestOptions = {
+                'method' : 'POST',
+                'followRedirect' : true,
+                'timeout' : [30000, 30000],
             }
-            callback(null, "originateB24Call " + data.toString());
+
+            log("Making a call " + caller + "@" + fusionConfig.domain + " -> " + callee);
+            request.request(requestURL, requestOptions, (err, data, res) => {
+                if (err) {
+                    callback("originateB24Call " + err);
+                    return;
+                }
+                if (res.statusCode !== 200) {
+                    callback("originateB24Call Fusion failed to answer with " + res.statusCode + " code");
+                    return;
+                }
+                callback(null, "originateB24Call " + data.toString());
+            });
+        })
+        .catch(err => {
+            callback(err);
         });
-    });
 }
 
 module.exports = originateB24Call;

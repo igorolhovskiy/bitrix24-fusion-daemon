@@ -17,61 +17,58 @@ let bridge = (headers, cache) => {
 
     log("bridge Call was answered by " + dialedUser);
 
-    getB24EmployeeList(bitrix24Url, cache, (err, res) => {
+    getB24EmployeeList(bitrix24Url, cache)
+        .then(res => {
+            let employeeList = res['phone_to_id'];
 
-        if (err) {
-            log("bridge Cannot get employeeList: " + err);
-            return;
-        }
-
-        let employeeList = res['phone_to_id'];
-
-        if (typeof employeeList[dialedUser] === 'undefined') {
-            log("bridge: User with extension " + dialedUser + " not found");
-            return;
-        }
-
-        let bitrix24Info = {
-            url: bitrix24Url,
-            userID: employeeList[dialedUser],
-            callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
-        }
-        
-        // Call function 500 ms after to make sure cache is populated
-        setTimeout(() => {
-            getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
-                legInfo
-                    .then(b24callInfo => {
-                        bitrix24Info['b24uuid'] = b24callInfo['uuid'];
-
-                        log("bridge Hiding call screens...");
-
-                        if (b24callInfo['type'] === 2) { // Processing screens only for inbound calls
-
-                            hideB24CallScreen(bitrix24Info, cache, (err) => {
-                                if (err) {
-                                    log("bridge" + err);
-                                }
-                            });
-
-                            if (bitrix24Config.showIMNotification) {
-                                let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
-                                bitrix24Info['message'] = "Incoming call from " + headers['variable_caller_id_name'] || "" + " <" + legANumber + "> was answered by " + dialedUser;
-                                notifyB24User(bitrix24Info, cache, (err) => {
+            if (typeof employeeList[dialedUser] === 'undefined') {
+                log("bridge: User with extension " + dialedUser + " not found");
+                return;
+            }
+    
+            let bitrix24Info = {
+                url: bitrix24Url,
+                userID: employeeList[dialedUser],
+                callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
+            }
+            
+            // Call function 500 ms after to make sure cache is populated
+            setTimeout(() => {
+                getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
+                    legInfo
+                        .then(b24callInfo => {
+                            bitrix24Info['b24uuid'] = b24callInfo['uuid'];
+    
+                            log("bridge Hiding call screens...");
+    
+                            if (b24callInfo['type'] === 2) { // Processing screens only for inbound calls
+    
+                                hideB24CallScreen(bitrix24Info, cache, (err) => {
                                     if (err) {
-                                        log("notifyB24User failed with " + err);
+                                        log("bridge" + err);
                                     }
                                 });
+    
+                                if (bitrix24Config.showIMNotification) {
+                                    let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
+                                    bitrix24Info['message'] = "Incoming call from " + headers['variable_caller_id_name'] || "" + " <" + legANumber + "> was answered by " + dialedUser;
+                                    notifyB24User(bitrix24Info, cache, (err) => {
+                                        if (err) {
+                                            log("bridge notifyB24User failed with " + err);
+                                        }
+                                    });
+                                }
                             }
-                        }
-                    }).catch(err => {
-                        // If we can't get call UUID - do nothing. Really
-                        log("bridge " + err);
-                    });
-            })
-        }, 500);
-
-    });
+                        }).catch(err => {
+                            // If we can't get call UUID - do nothing. Really
+                            log("bridge " + err);
+                        });
+                })
+            }, 500);
+        })
+        .catch(err => {
+            log("bridge Cannot get employeeList: " + err);
+        });
 }
 
 module.exports = bridge;

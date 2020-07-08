@@ -6,72 +6,77 @@ const log = require('app/init/logger')(module),
 // [{extension_1: userid_1}, {extension_2: userid_2}, ... , {extension_n: userid_n}]
 //
 
-function getB24EmployeeList(bitrixURL, cache, callback) {
-    
-    let employeeList = cache.get('employeeList');
+// TODO - Rewrite to Promise
 
-    if (employeeList) {
-        log("Got data from cache!");
-        callback(null, employeeList);
-        return;
-    }
+function getB24EmployeeList(bitrixURL, cache) {
 
-    log("Cache is empty, getting data from server...");
+    return new Promise((resolve, reject) => {
 
-    let requestURL = bitrixURL + "/user.get.json?"
-        + "USER_TYPE=employee";
+        let employeeList = cache.get('employeeList');
 
-    request.request(requestURL, (err, data, res) => {
-
-        if (err) {
-            callback(err);
+        if (employeeList) {
+            //log("Got data from cache!");
+            resolve(employeeList);
             return;
         }
 
-        if (res.statusCode !== 200) {
-            callback(true, "getB24EmployeeList Server failed to answer with " + res.statusCode + " code");
-        }
+        log("Cache is empty, getting data from server...");
 
-        let userList = data.toString();
+        let requestURL = bitrixURL + "/user.get.json?"
+            + "USER_TYPE=employee";
 
-        try {
-            userList = JSON.parse(userList);
-        } catch (e) {
-            callback(true, "getB24EmployeeList Answer from server is not JSON");
-            return;
-        }
+        request.request(requestURL, (err, data, res) => {
 
-        if (typeof userList.result === 'undefined') {
-            callback(true, "getB24EmployeeList Missing result section in answer");
-            return;
-        }
-
-        userList = userList.result;
-
-        employeeList = {
-            'phone_to_id': {},
-            'id_to_phone' : {}
-        };
-
-        for (let user in userList) {
-
-            if (typeof userList[user].UF_PHONE_INNER === 'undefined' || userList[user].UF_PHONE_INNER === null) {
-                continue;
+            if (err) {
+                reject(err);
+                return;
             }
 
-            if (typeof userList[user].ID === 'undefined') {
-                log("Strange, we have a user without ID: " + JSON.stringify(user));
-                continue;
+            if (res.statusCode !== 200) {
+                reject("getB24EmployeeList Server failed to answer with " + res.statusCode + " code");
             }
-            employeeList['phone_to_id'][userList[user].UF_PHONE_INNER] = userList[user].ID;
-            employeeList['id_to_phone'][userList[user].ID] = userList[user].UF_PHONE_INNER;
-        }
 
-        log("Saving employeeList to cache");
-        //cache.put('employeeList', employeeList, 1000); // Store for 1 sec
-        cache.put('employeeList', employeeList, 10 * 60 * 1000); // Store for 10 min
+            let userList = data.toString();
 
-        callback(null, employeeList);
+            try {
+                userList = JSON.parse(userList);
+            } catch (e) {
+                reject("getB24EmployeeList Answer from server is not JSON");
+                return;
+            }
+
+            if (typeof userList.result === 'undefined') {
+                reject("getB24EmployeeList Missing result section in answer");
+                return;
+            }
+
+            userList = userList.result;
+
+            employeeList = {
+                'phone_to_id': {},
+                'id_to_phone' : {}
+            };
+
+            for (let user in userList) {
+
+                if (typeof userList[user].UF_PHONE_INNER === 'undefined' || userList[user].UF_PHONE_INNER === null) {
+                    continue;
+                }
+
+                if (typeof userList[user].ID === 'undefined') {
+                    log("Strange, we have a user without ID: " + JSON.stringify(user));
+                    continue;
+                }
+                employeeList['phone_to_id'][userList[user].UF_PHONE_INNER] = userList[user].ID;
+                employeeList['id_to_phone'][userList[user].ID] = userList[user].UF_PHONE_INNER;
+            }
+
+            //log("Saving employeeList to cache");
+            //cache.put('employeeList', employeeList, 1000); // Store for 1 sec
+            cache.put('employeeList', employeeList, 10 * 60 * 1000); // Store for 10 min
+
+            resolve(employeeList);
+        });
     });
 }   
 
