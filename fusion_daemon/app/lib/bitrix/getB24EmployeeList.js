@@ -6,8 +6,6 @@ const log = require('app/init/logger')(module),
 // [{extension_1: userid_1}, {extension_2: userid_2}, ... , {extension_n: userid_n}]
 //
 
-// TODO - Rewrite to Promise
-
 function getB24EmployeeList(bitrixURL, cache) {
 
     return new Promise((resolve, reject) => {

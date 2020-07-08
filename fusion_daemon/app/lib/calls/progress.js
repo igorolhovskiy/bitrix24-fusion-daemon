@@ -55,7 +55,7 @@ let progress = (headers, cache) => {
                             }
                         }).catch(err => {
                             // If we can't get call UUID - do nothing. Really
-                            log("progress getB24CallInfo failed with " + err);
+                            log("getB24CallInfo failed with " + err);
                         });
                 });  
             }, 500);
