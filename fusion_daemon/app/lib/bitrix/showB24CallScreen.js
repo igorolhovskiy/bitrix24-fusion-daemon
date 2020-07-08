@@ -1,7 +1,7 @@
 const log = require('app/init/logger')(module),
     request = require('urllib');
 
-let showCallScreen = (bitrix24Info, cache, callback) => {
+let showB24CallScreen = (bitrix24Info, cache, callback) => {
 
     // Save all showCallScreens to database
 
@@ -32,4 +32,4 @@ let showCallScreen = (bitrix24Info, cache, callback) => {
     });
 }
 
-module.exports = showCallScreen;
+module.exports = showB24CallScreen;

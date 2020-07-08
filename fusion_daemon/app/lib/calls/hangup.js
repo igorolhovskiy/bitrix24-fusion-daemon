@@ -60,7 +60,9 @@ let hangup = (headers, cache) => {
                         bitrix24Info['userID'] = employeeList[dialedUser];
                     }
 
-                    finishB24Call(bitrix24Info, cache);
+                    setTimeout(() => {
+                        finishB24Call(bitrix24Info, cache);
+                    }, 500);
                 });
             })
             .catch(err => {

@@ -1,7 +1,7 @@
 const log = require('app/init/logger')(module),
       getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
       getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-      showCallScreen = require('app/lib/bitrix/showCallScren');
+      showB24CallScreen = require('app/lib/bitrix/showB24CallScreen');
 
 
 let progress = (headers, cache) => {
@@ -37,9 +37,9 @@ let progress = (headers, cache) => {
                             log("Showing screen to " + dialedUser + "/" + employeeList[dialedUser]);
 
                             bitrix24Info['b24uuid'] = b24callInfo['uuid'];
-                            showCallScreen(bitrix24Info, cache, (err) => {
+                            showB24CallScreen(bitrix24Info, cache, (err) => {
                                 if (err) {
-                                    log("showCallScreen failed with " + err);
+                                    log("showB24CallScreen failed with " + err);
                                 }
                             });
                         }

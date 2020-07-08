@@ -1,7 +1,7 @@
 const log = require('app/init/logger')(module),
     getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-    hideCallScreen = require('app/lib/bitrix/hideCallScreen');
+    hideB24CallScreen = require('app/lib/bitrix/hideB24CallScreen');
 
 let bridge = (headers, cache) => {
 
@@ -47,7 +47,7 @@ let bridge = (headers, cache) => {
 
                         if (b24callInfo['type'] === 2) { // Processing screens only for inbound calls
 
-                            hideCallScreen(bitrix24Info, cache, (err) => {
+                            hideB24CallScreen(bitrix24Info, cache, (err) => {
                                 if (err) {
                                     log("bridge" + err);
                                 }
