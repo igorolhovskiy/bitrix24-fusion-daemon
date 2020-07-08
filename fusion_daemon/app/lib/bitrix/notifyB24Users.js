@@ -28,8 +28,10 @@ let notifyB24Users = (bitrix24Info, cache ,callback) => {
     usersWatchingScreen.forEach((user) => {
         let requestURL = bitrix24Info['url'] + "/im.notify.json?"
             + "to=" + user
-            + "&message=" + message
+            + "&message=" + bitrix24Info['message']
             + "&type=SYSTEM"
+
+        log("Showing notification: <" + bitrix24Info['message'] + "> to user " + user);
         
         request.request(requestURL, (err) => {
             if (err) {
