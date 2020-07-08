@@ -1,6 +1,7 @@
 const log = require('app/init/logger')(module),
     bitrixConfig = require('app/config/bitrix'),
     fusionConfig = require('app/config/fusion'),
+    restConfig = require('app/config/rest'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
     request = require('urllib');
 
@@ -12,12 +13,12 @@ let originateB24Call = (requestBody, cache, callback) => {
         return;
     }
 
-    if (requestBody.auth.domain !== bitrixConfig.restRequestDomain) {
+    if (requestBody.auth.domain !== restConfig.requestDomain) {
         callback("originateB24Call Domain " + requestBody.auth.domain + " is not authorized");
         return;
     }
 
-    if (requestBody.auth.application_token !== bitrixConfig.restToken) {
+    if (requestBody.auth.application_token !== restConfig.token) {
         callback("originateB24Call Auth token " + requestBody.auth.application_token + " is invalid");
         return;
     }
