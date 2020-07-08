@@ -77,11 +77,11 @@ let hangup = (headers, cache) => {
                         }, 500);
                     })
                     .catch(err => {
-                        log("hangup error: " + err);
+                        log("Hangup: " + err);
                     });
             })
             .catch(err => {
-                log("hangup error: " + err);
+                log("Hangup: " + err);
             });
     });
 }
