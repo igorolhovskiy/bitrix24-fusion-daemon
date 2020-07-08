@@ -1,7 +1,8 @@
 const log = require('app/init/logger')(module),
     getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-    hideB24CallScreen = require('app/lib/bitrix/hideB24CallScreen');
+    hideB24CallScreen = require('app/lib/bitrix/hideB24CallScreen'),
+    notifyB24User = require('app/lib/bitrix/notifyB24Users');
 
 let bridge = (headers, cache) => {
 
@@ -52,6 +53,16 @@ let bridge = (headers, cache) => {
                                     log("bridge" + err);
                                 }
                             });
+
+                            if (bitrix24Config.showIMNotification) {
+                                let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
+                                bitrix24Info['message'] = "Incoming call from " + headers['caller_id_name'] + " <" + legANumber + "> was answered by " + dialedUser;
+                                notifyB24User(bitrix24Info, cache, (err) => {
+                                    if (err) {
+                                        log("notifyB24User failed with " + err);
+                                    }
+                                });
+                            }
                         }
                     }).catch(err => {
                         // If we can't get call UUID - do nothing. Really

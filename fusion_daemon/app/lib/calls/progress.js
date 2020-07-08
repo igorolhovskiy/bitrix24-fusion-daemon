@@ -1,7 +1,9 @@
 const log = require('app/init/logger')(module),
       getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
       getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-      showB24CallScreen = require('app/lib/bitrix/showB24CallScreen');
+      showB24CallScreen = require('app/lib/bitrix/showB24CallScreen'),
+      notifyB24User = require('app/lib/bitrix/notifyB24Users'),
+      bitrix24Config = require('app/config/bitrix');
 
 
 let progress = (headers, cache) => {
@@ -42,6 +44,16 @@ let progress = (headers, cache) => {
                                     log("showB24CallScreen failed with " + err);
                                 }
                             });
+
+                            if (bitrix24Config.showIMNotification) {
+                                let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
+                                bitrix24Info['message'] = "Incoming call from " + headers['caller_id_name'] + " <" + legANumber + ">";
+                                notifyB24User(bitrix24Info, cache, (err) => {
+                                    if (err) {
+                                        log("notifyB24User failed with " + err);
+                                    }
+                                });
+                            }
                         }
                     }).catch(err => {
                         // If we can't get call UUID - do nothing. Really

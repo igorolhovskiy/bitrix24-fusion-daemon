@@ -1,4 +1,6 @@
 const log = require('app/init/logger')(module),
+    notifyB24User = require('app/lib/bitrix/notifyB24Users'),
+    bitrix24Config = require('app/config/bitrix'),
     getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
     finishB24Call = require('app/lib/bitrix/finishB24Call'),
@@ -62,6 +64,16 @@ let hangup = (headers, cache) => {
 
                     setTimeout(() => {
                         finishB24Call(bitrix24Info, cache);
+
+                        if (bitrix24Config.showIMNotification && bitrix24Info['sip_code'] !== '200') {
+                            let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
+                            bitrix24Info['message'] = "Call from " + headers['caller_id_name'] + " <" + legANumber + "> was missed!";
+                            notifyB24User(bitrix24Info, cache, (err) => {
+                                if (err) {
+                                    log("notifyB24User failed with " + err);
+                                }
+                            });
+                        }
                     }, 500);
                 });
             })
