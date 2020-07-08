@@ -1,7 +1,7 @@
 const log = require('app/init/logger')(module),
     request = require('urllib');
 
-let hideCallScreen = (bitrix24Info, cache, callback) => {
+let notifyB24Users = (bitrix24Info, cache ,callback) => {
 
     // Get all showCallScreens from cache
 
@@ -12,6 +12,12 @@ let hideCallScreen = (bitrix24Info, cache, callback) => {
         callback(null);
         return;
     }
+
+    if (!bitrix24Info['message']) {
+        callback("notifyB24Users no message is specified!");
+        return;
+    }
+
     try {
         usersWatchingScreen = JSON.parse(usersWatchingScreen);
     } catch (e) {
@@ -20,21 +26,19 @@ let hideCallScreen = (bitrix24Info, cache, callback) => {
     }
 
     usersWatchingScreen.forEach((user) => {
-        if (user !== bitrix24Info['userID']) {
-
-            let requestURL = bitrix24Info['url'] + "/telephony.externalcall.hide?"
-                + "USER_ID=" + user
-                + "&CALL_ID=" + bitrix24Info['b24uuid'];
-            
-            request.request(requestURL, (err) => {
-                if (err) {
-                    log(err);
-                }
-            });
-        }
+        let requestURL = bitrix24Info['url'] + "/im.notify.json?"
+            + "to=" + user
+            + "&message=" + message
+            + "&type=SYSTEM"
+        
+        request.request(requestURL, (err) => {
+            if (err) {
+                callback(err);
+            }
+        });
     });
 
     callback(null);
 }
 
-module.exports = hideCallScreen;
+module.exports = notifyB24Users;
