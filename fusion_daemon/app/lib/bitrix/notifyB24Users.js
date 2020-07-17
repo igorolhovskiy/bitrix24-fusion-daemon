@@ -31,8 +31,17 @@ let notifyB24Users = (bitrix24Info, cache ,callback) => {
             + "&message=" + bitrix24Info['message']
             + "&type=SYSTEM"
 
+        let currentTS = Math.floor(Date.now() / 1000);
+
+        if (cache.get('notify_' + currentTS) === requestURL) {
+            log("Duplicate notification: <" + bitrix24Info['message'] + "> to user " + user);
+            return;
+        }
+
         log("Showing notification: <" + bitrix24Info['message'] + "> to user " + user);
         
+        cache.put('notify_' + currentTS, requestURL, 1000);
+
         request.request(requestURL, (err) => {
             if (err) {
                 callback(err);

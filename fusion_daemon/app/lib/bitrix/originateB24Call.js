@@ -58,7 +58,8 @@ let originateB24Call = (requestBody, cache, callback) => {
                     + fusionConfig.c2cPath + "?"
                     + "key=" + fusionConfig.apiKey
                     + "&src=" +  caller
-                    + "&dest=" + callee;
+                    + "&dest=" + callee
+                    + "&timeout=15";
             
             let requestOptions = {
                 'method' : 'POST',

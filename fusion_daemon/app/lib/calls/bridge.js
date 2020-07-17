@@ -50,8 +50,11 @@ let bridge = (headers, cache) => {
                                 });
     
                                 if (bitrix24Config.showIMNotification) {
+
                                     let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
-                                    bitrix24Info['message'] = "Incoming call from " + headers['variable_caller_id_name'] || "" + " <" + legANumber + "> was answered by " + dialedUser;
+                                    let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
+
+                                    bitrix24Info['message'] = "Incoming call from " + legAName + " <" + legANumber + "> was answered by " + dialedUser;
                                     notifyB24User(bitrix24Info, cache, (err) => {
                                         if (err) {
                                             log("bridge notifyB24User failed with " + err);
