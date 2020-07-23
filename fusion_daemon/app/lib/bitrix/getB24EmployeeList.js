@@ -16,14 +16,6 @@ function getB24EmployeeList(bitrixURL, cache) {
 
     employeeList = new Promise((resolve, reject) => {
 
-        let employeeList = cache.get('employeeList');
-
-        if (employeeList) {
-            //log("Got data from cache!");
-            resolve(employeeList);
-            return;
-        }
-
         log("Cache is empty, getting data from server...");
 
         let requestURL = bitrixURL + "/user.get.json?"
@@ -56,7 +48,7 @@ function getB24EmployeeList(bitrixURL, cache) {
 
             userList = userList.result;
 
-            employeeList = {
+            let employeeListResult = {
                 'phone_to_id': {},
                 'id_to_phone' : {}
             };
@@ -71,14 +63,14 @@ function getB24EmployeeList(bitrixURL, cache) {
                     log("Strange, we have a user without ID: " + JSON.stringify(user));
                     continue;
                 }
-                employeeList['phone_to_id'][userList[user].UF_PHONE_INNER] = userList[user].ID;
-                employeeList['id_to_phone'][userList[user].ID] = userList[user].UF_PHONE_INNER;
+                employeeListResult['phone_to_id'][userList[user].UF_PHONE_INNER] = userList[user].ID;
+                employeeListResult['id_to_phone'][userList[user].ID] = userList[user].UF_PHONE_INNER;
             }
 
             //log("Saving employeeList to cache");
             //cache.put('employeeList', employeeList, 1000); // Store for 1 sec
 
-            resolve(employeeList);
+            resolve(employeeListResult);
         });
     });
 
