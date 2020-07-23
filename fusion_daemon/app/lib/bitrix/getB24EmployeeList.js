@@ -2,7 +2,7 @@ const log = require('app/init/logger')(module),
     request = require('urllib');
 
 
-// Returning format
+// Returning format - Promise
 // [{extension_1: userid_1}, {extension_2: userid_2}, ... , {extension_n: userid_n}]
 //
 
@@ -83,7 +83,7 @@ function getB24EmployeeList(bitrixURL, cache) {
     });
 
     cache.put('employeeList', employeeList, 10 * 60 * 1000); // Store for 10 min
-    
+
     return employeeList;
 }   
 
