@@ -3,33 +3,34 @@ const log = require('app/init/logger')(module),
     fusionConfig = require('app/config/fusion'),
     restConfig = require('app/config/rest'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-    request = require('urllib');
+    //request = require('urllib');
+    freeswitchOriginate = require('app/lib/calls/originate');
 
 let originateB24Call = (requestBody, cache, callback) => {
 
-    if (requestBody.event !== "ONEXTERNALCALLSTART") {
-        callback("originateB24Call Request event is not ONEXTERNALCALLSTART", null);
+    if (requestBody.event !== 'ONEXTERNALCALLSTART') {
+        callback('originateB24Call Request event is not ONEXTERNALCALLSTART', null);
         log(JSON.stringify(requestBody));
         return;
     }
 
     if (requestBody.auth.domain !== restConfig.requestDomain) {
-        callback("originateB24Call Domain " + requestBody.auth.domain + " is not authorized");
+        callback('originateB24Call Domain ' + requestBody.auth.domain + ' is not authorized');
         return;
     }
 
     if (requestBody.auth.application_token !== restConfig.token) {
-        callback("originateB24Call Auth token " + requestBody.auth.application_token + " is invalid");
+        callback('originateB24Call Auth token ' + requestBody.auth.application_token + ' is invalid');
         return;
     }
 
     if (!fusionConfig.apiKey) {
-        callback("originateB24Call Fusion API key is not specified");
+        callback('originateB24Call Fusion API key is not specified');
         return;
     }
 
     if (!fusionConfig.domain) {
-        callback("originateB24Call Fusion domain name is not specified");
+        callback('originateB24Call Fusion domain name is not specified');
         return;
     }
 
@@ -37,7 +38,7 @@ let originateB24Call = (requestBody, cache, callback) => {
     let userID = requestBody.data['USER_ID'];
 
     if (!userID) {
-        callback("originateB24Call USER_ID is missing");
+        callback('originateB24Call USER_ID is missing');
         return;
     }
 
@@ -46,39 +47,56 @@ let originateB24Call = (requestBody, cache, callback) => {
             let employeeList = res['id_to_phone'];
 
             if (!employeeList[userID]) {
-                callback("originateB24Call user " + userID + " does not have extension");
+                callback('originateB24Call user ' + userID + ' does not have extension');
                 return;
             }
 
             let caller = employeeList[userID];
             let callee =requestBody.data['PHONE_NUMBER'] || requestBody.data['PHONE_NUMBER_INTERNATIONAL'];
 
-            let requestURL = fusionConfig.transport 
-                    + "://" + fusionConfig.domain 
-                    + fusionConfig.c2cPath + "?"
-                    + "key=" + fusionConfig.apiKey
-                    + "&src=" +  caller
-                    + "&dest=" + callee
-                    + "&timeout=15";
-            
-            let requestOptions = {
-                'method' : 'POST',
-                'followRedirect' : true,
-                'timeout' : [30000, 30000],
+            log('Making a call ' + caller + '@' + fusionConfig.domain + ' -> ' + callee);
+
+            let originateInfo = {
+                src: caller,
+                domain: fusionConfig.domain,
+                dst: callee,
+                timeout: '15',
+                autoAnswer: true,
             }
 
-            log("Making a call " + caller + "@" + fusionConfig.domain + " -> " + callee);
-            request.request(requestURL, requestOptions, (err, data, res) => {
+            freeswitchOriginate(originateInfo, (err, res) => {
                 if (err) {
-                    callback("originateB24Call " + err);
+                    callback('originateB24Call ' + err);
                     return;
                 }
-                if (res.statusCode !== 200) {
-                    callback("originateB24Call Fusion failed to answer with " + res.statusCode + " code");
-                    return;
-                }
-                callback(null, "originateB24Call " + data.toString());
+                callback('originateB24Call ' + res);
             });
+
+            // let requestURL = fusionConfig.transport 
+            //         + '://' + fusionConfig.domain 
+            //         + fusionConfig.c2cPath + '?'
+            //         + 'key=' + fusionConfig.apiKey
+            //         + '&src=' +  caller
+            //         + '&dest=' + callee
+            //         + '&timeout=15';
+            
+            // let requestOptions = {
+            //     'method' : 'POST',
+            //     'followRedirect' : true,
+            //     'timeout' : [30000, 30000],
+            // }
+
+            // request.request(requestURL, requestOptions, (err, data, res) => {
+            //     if (err) {
+            //         callback('originateB24Call ' + err);
+            //         return;
+            //     }
+            //     if (res.statusCode !== 200) {
+            //         callback('originateB24Call Fusion failed to answer with ' + res.statusCode + ' code');
+            //         return;
+            //     }
+            //     callback(null, 'originateB24Call ' + data.toString());
+            // });
         })
         .catch(err => {
             callback(err);
