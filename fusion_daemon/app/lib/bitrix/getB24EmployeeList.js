@@ -8,7 +8,13 @@ const log = require('app/init/logger')(module),
 
 function getB24EmployeeList(bitrixURL, cache) {
 
-    return new Promise((resolve, reject) => {
+    let employeeList = cache.get('employeeList');
+    
+    if (employeeList) {
+        return employeeList;
+    }
+
+    employeeList = new Promise((resolve, reject) => {
 
         let employeeList = cache.get('employeeList');
 
@@ -71,11 +77,14 @@ function getB24EmployeeList(bitrixURL, cache) {
 
             //log("Saving employeeList to cache");
             //cache.put('employeeList', employeeList, 1000); // Store for 1 sec
-            cache.put('employeeList', employeeList, 10 * 60 * 1000); // Store for 10 min
 
             resolve(employeeList);
         });
     });
+
+    cache.put('employeeList', employeeList, 10 * 60 * 1000); // Store for 10 min
+    
+    return employeeList;
 }   
 
 module.exports = getB24EmployeeList;
