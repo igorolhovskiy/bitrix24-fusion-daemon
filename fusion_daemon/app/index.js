@@ -32,7 +32,7 @@ if (bitrixConfig.url) {
                 callAnswer(headers, cache);
             }
         })
-        .on('esl::event::CHANNEL_DESTROY::*', function(e) {
+        .on('esl::event::CHANNEL_HANGUP_COMPLETE::*', function(e) {
             let headers = checkRequest(e.headers);
             if (headers) {
                 callHangup(headers, cache);
