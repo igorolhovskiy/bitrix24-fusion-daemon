@@ -28,7 +28,7 @@ let create = (headers, cache) => {
             if (employeeList[legBNumber]) {
 
                 isCallRegistered = true;
-                log("Registering inbound call to extension " + legBNumber);
+                log("Created inbound call to extension " + legBNumber);
 
                 let bitrix24Info = {
                     callerid: legANumber,
@@ -40,17 +40,17 @@ let create = (headers, cache) => {
 
                 createB24Call(bitrix24Info, cache)
                     .then((b24callInfo) => {                    
-                        log("Registered inbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']);
+                        log("Created inbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']);
                     }).catch((err) => {
                         // If we can't get call UUID - do nothing. Really
-                        log("Registering inbound call " + bitrix24Info['callUuid'] + " failed: " + err);
+                        log("Created inbound call " + bitrix24Info['callUuid'] + " failed: " + err);
                     });
             }
 
             if (employeeList[legANumber]) {
 
                 isCallRegistered = true;
-                log("Registering outbound call from extension " + legANumber);
+                log("Created outbound call from extension " + legANumber);
 
                 let bitrix24Info = {
                     callerid: legBNumber,
@@ -62,10 +62,10 @@ let create = (headers, cache) => {
 
                 createB24Call(bitrix24Info, cache)
                     .then(b24callInfo => {                    
-                        log("Registered outbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']);
+                        log("Created outbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']);
                     }).catch(err => {
                         // If we can't get call UUID - do nothing. Really
-                        log("Registering outbound call " + bitrix24Info['callUuid'] + " failed: " + err);
+                        log("Created outbound call " + bitrix24Info['callUuid'] + " failed: " + err);
                     });
             }
 
@@ -93,10 +93,10 @@ let create = (headers, cache) => {
 
                 createB24Call(bitrix24Info, cache)
                     .then(b24callInfo => {                    
-                        log("Registered generic call "  + bitrix24Info['callUuid'] + "_" + callType + " -> " + b24callInfo['uuid']);
+                        log("Created generic call "  + bitrix24Info['callUuid'] + "_" + callType + " -> " + b24callInfo['uuid']);
                     }).catch(err => {
                         // If we can't get call UUID - do nothing. Really
-                        log("Registering generic call " + bitrix24Info['callUuid'] + " failed: " + err);
+                        log("Created generic call " + bitrix24Info['callUuid'] + " failed: " + err);
                     });
             }
         })
