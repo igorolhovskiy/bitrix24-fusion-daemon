@@ -2,7 +2,7 @@
 const request = require('urllib'),
     log = require('app/init/logger')(module),
     fusionConfig = require('app/config/fusion'),
-    bitrix24Config = require('app/config/bitrix');
+    bitrixConfig = require('app/config/bitrix');
 
 let finishB24Call = (callInfo, cache) => {
 
@@ -14,14 +14,14 @@ let finishB24Call = (callInfo, cache) => {
     cache.del("uuid_" + callInfo['callUuid'] + "_1");
     cache.del("uuid_" + callInfo['callUuid'] + "_2");
 
-    let requestURL = callInfo['url'] + "/telephony.externalcall.finish.json?"
+    let requestURL = bitrixConfig.url + "/telephony.externalcall.finish.json?"
         + "CALL_ID=" + callInfo['b24uuid']
         + "&USER_ID=" + callInfo['userID']
         + "&DURATION=" + callInfo['duration']
         + "&STATUS_CODE=" + callInfo['sip_code']
         + "&ADD_TO_CHAT=0";
 
-    if (bitrix24Config.appendRecording && callInfo['rec_file'] && fusionConfig.recordingPath) {
+    if (bitrixConfig.appendRecording && callInfo['rec_file'] && fusionConfig.recordingPath) {
 
         let recordingPath = callInfo['rec_path'].replace(fusionConfig.localRecordingPath, '');
         recordingPath = fusionConfig.recordingPath + recordingPath + "/" + callInfo['rec_file'];

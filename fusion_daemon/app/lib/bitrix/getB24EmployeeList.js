@@ -1,12 +1,12 @@
 const log = require('app/init/logger')(module),
+    bitrixConfig = require('app/config/bitrix'),
     request = require('urllib');
-
-
+    
 // Returning format - Promise
 // [{extension_1: userid_1}, {extension_2: userid_2}, ... , {extension_n: userid_n}]
 //
 
-function getB24EmployeeList(bitrixURL, cache) {
+function getB24EmployeeList(cache) {
 
     let employeeList = cache.get('employeeList');
     
@@ -18,7 +18,7 @@ function getB24EmployeeList(bitrixURL, cache) {
 
         log("Cache is empty, getting data from server...");
 
-        let requestURL = bitrixURL + "/user.get.json?"
+        let requestURL = bitrixConfig.url + "/user.get.json?"
             + "USER_TYPE=employee";
 
         request.request(requestURL, (err, data, res) => {

@@ -1,10 +1,9 @@
 const log = require('app/init/logger')(module),
+      bitrixConfig = require('app/config/bitrix'),
       createB24Call = require('app/lib/bitrix/createB24Call'),
       getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList');
 
 let create = (headers, cache) => {
-
-    let bitrix24Url = headers['variable_bitrix24_url'];
 
     // Get correct LegA/LegB numbers
 
@@ -19,7 +18,7 @@ let create = (headers, cache) => {
 
     log("Processing call " + legANumber + " -> " + legBNumber);
 
-    getB24EmployeeList(bitrix24Url, cache)
+    getB24EmployeeList(cache)
         .then(res => {
 
             let employeeList = res['phone_to_id'];
@@ -27,7 +26,7 @@ let create = (headers, cache) => {
             if (employeeList[legBNumber]) {
                 log("Registering inbound call to extension " + legBNumber);
                 let bitrix24Info = {
-                    url: bitrix24Url,
+                    url: bitrixConfig.url,
                     callerid: legANumber,
                     calleeid: legBNumber,
                     userID: employeeList[legBNumber],
@@ -47,7 +46,7 @@ let create = (headers, cache) => {
             if (employeeList[legANumber]) {
                 log("Registering outbound call from extension " + legANumber);
                 let bitrix24Info = {
-                    url: bitrix24Url,
+                    url: bitrixConfig.url,
                     callerid: legBNumber,
                     calleeid: legANumber,
                     userID: employeeList[legANumber],

@@ -3,15 +3,14 @@ const log = require('app/init/logger')(module),
       getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
       showB24CallScreen = require('app/lib/bitrix/showB24CallScreen'),
       notifyB24User = require('app/lib/bitrix/notifyB24Users'),
-      bitrix24Config = require('app/config/bitrix');
+      bitrixConfig = require('app/config/bitrix');
 
 
 let progress = (headers, cache) => {
 
     let dialedUser =  headers['variable_callee_id_number'] || headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
-    let bitrix24Url = headers['variable_bitrix24_url'];
 
-    getB24EmployeeList(bitrix24Url, cache)
+    getB24EmployeeList(cache)
         .then(res => {
             let employeeList = res['phone_to_id'];
 
@@ -21,7 +20,6 @@ let progress = (headers, cache) => {
             }
 
             let bitrix24Info = {
-                url: bitrix24Url,
                 userID: employeeList[dialedUser],
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
             }
@@ -41,7 +39,7 @@ let progress = (headers, cache) => {
                                     }
                                 });
 
-                                if (bitrix24Config.showIMNotification) {
+                                if (bitrixConfig.showIMNotification) {
 
                                     let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
                                     let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];

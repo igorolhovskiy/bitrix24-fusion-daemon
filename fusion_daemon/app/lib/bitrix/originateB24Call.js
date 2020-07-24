@@ -1,9 +1,7 @@
 const log = require('app/init/logger')(module),
-    bitrixConfig = require('app/config/bitrix'),
     fusionConfig = require('app/config/fusion'),
     restConfig = require('app/config/rest'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-    //request = require('urllib');
     freeswitchOriginate = require('app/lib/calls/originate');
 
 let originateB24Call = (requestBody, cache, callback) => {
@@ -24,11 +22,6 @@ let originateB24Call = (requestBody, cache, callback) => {
         return;
     }
 
-    if (!fusionConfig.apiKey) {
-        callback('originateB24Call Fusion API key is not specified');
-        return;
-    }
-
     if (!fusionConfig.domain) {
         callback('originateB24Call Fusion domain name is not specified');
         return;
@@ -42,7 +35,7 @@ let originateB24Call = (requestBody, cache, callback) => {
         return;
     }
 
-    getB24EmployeeList(bitrixConfig.url, cache)
+    getB24EmployeeList(cache)
         .then(res => {
             let employeeList = res['id_to_phone'];
 
@@ -60,7 +53,7 @@ let originateB24Call = (requestBody, cache, callback) => {
                 src: caller,
                 domain: fusionConfig.domain,
                 dst: callee,
-                timeout: '15',
+                timeout: '25',
                 autoAnswer: true,
             }
 
@@ -71,32 +64,6 @@ let originateB24Call = (requestBody, cache, callback) => {
                 }
                 callback('originateB24Call ' + res);
             });
-
-            // let requestURL = fusionConfig.transport 
-            //         + '://' + fusionConfig.domain 
-            //         + fusionConfig.c2cPath + '?'
-            //         + 'key=' + fusionConfig.apiKey
-            //         + '&src=' +  caller
-            //         + '&dest=' + callee
-            //         + '&timeout=15';
-            
-            // let requestOptions = {
-            //     'method' : 'POST',
-            //     'followRedirect' : true,
-            //     'timeout' : [30000, 30000],
-            // }
-
-            // request.request(requestURL, requestOptions, (err, data, res) => {
-            //     if (err) {
-            //         callback('originateB24Call ' + err);
-            //         return;
-            //     }
-            //     if (res.statusCode !== 200) {
-            //         callback('originateB24Call Fusion failed to answer with ' + res.statusCode + ' code');
-            //         return;
-            //     }
-            //     callback(null, 'originateB24Call ' + data.toString());
-            // });
         })
         .catch(err => {
             callback(err);

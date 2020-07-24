@@ -15,7 +15,7 @@ let originate = (originateInfo, callback) => {
         }
 
         if (userExists.body !== 'true') {
-            callback('originate user ' + extension + ' not found at ' + domainName);
+            log('originate user ' + extension + ' not found at ' + domainName);
             return;
         }
 
@@ -54,9 +54,12 @@ let originate = (originateInfo, callback) => {
             }
 
             // Fire up the call!
-            freeswitch.bgapi('originate', sourceCommon + ' ' + dstCommon, originateResult => {
-                callback(null, 'originate: ' + originateResult);
-                return;
+            freeswitch.api('originate', sourceCommon + ' ' + dstCommon, originateResult => {
+                if(!originateResult || !originateResult.body || originateResult.body.substr(0,4) === '-ERR') {
+                    callback('originate ' + sourceCommon + ' ' + dstCommon + ' failed');
+                    return;
+                }
+                callback(null, 'originate: ' + originateResult.body);
             });
 
         });

@@ -1,4 +1,5 @@
 const log = require('app/init/logger')(module),
+    bitrixConfig = require('app/config/bitrix'),
     request = require('urllib');
 
 let notifyB24Users = (bitrix24Info, cache ,callback) => {
@@ -26,7 +27,7 @@ let notifyB24Users = (bitrix24Info, cache ,callback) => {
     }
 
     usersWatchingScreen.forEach((user) => {
-        let requestURL = bitrix24Info['url'] + "/im.notify.json?"
+        let requestURL = bitrixConfig.url + "/im.notify.json?"
             + "to=" + user
             + "&message=" + bitrix24Info['message']
             + "&type=SYSTEM"

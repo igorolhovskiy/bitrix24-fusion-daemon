@@ -1,4 +1,5 @@
 const log = require('app/init/logger')(module),
+    bitrixConfig = require('app/config/bitrix'),
     request = require('urllib');
 
 let showB24CallScreen = (bitrix24Info, cache, callback) => {
@@ -21,7 +22,7 @@ let showB24CallScreen = (bitrix24Info, cache, callback) => {
         return;
     }
 
-    let requestURL = bitrix24Info['url'] + "/telephony.externalcall.show?"
+    let requestURL = bitrixConfig.url + "/telephony.externalcall.show?"
         + "USER_ID=" + bitrix24Info['userID']
         + "&CALL_ID=" + bitrix24Info['b24uuid'];
     

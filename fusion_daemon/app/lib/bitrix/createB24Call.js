@@ -24,11 +24,6 @@ let createB24CallInfo = (callInfo, cache) => {
             return;
         }
 
-        if (!callInfo['url']) {
-            reject("createB24callInfo No Bitrix24 URL provided!");
-            return;
-        }
-
         if (!callInfo['callerid']) {
             reject("createB24callInfo No callerID provided!");
             return;
@@ -47,7 +42,7 @@ let createB24CallInfo = (callInfo, cache) => {
             }
         }
 
-        let requestURL = callInfo['url'] + "/telephony.externalcall.register.json?"
+        let requestURL = bitrixConfig.url + "/telephony.externalcall.register.json?"
             + "USER_ID=" + callInfo['userID']
             + "&PHONE_NUMBER=" + callInfo['callerid']
             + "&TYPE=" + callInfo['type']

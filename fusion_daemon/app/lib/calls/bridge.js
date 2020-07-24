@@ -13,11 +13,10 @@ let bridge = (headers, cache) => {
     }
 
     let dialedUser = headers['variable_callee_id_number'] || headers['Other-Leg-Destination-Number'];
-    let bitrix24Url = headers['variable_bitrix24_url'];
 
     log("bridge Call was answered by " + dialedUser);
 
-    getB24EmployeeList(bitrix24Url, cache)
+    getB24EmployeeList(cache)
         .then(res => {
             let employeeList = res['phone_to_id'];
 
@@ -27,7 +26,6 @@ let bridge = (headers, cache) => {
             }
     
             let bitrix24Info = {
-                url: bitrix24Url,
                 userID: employeeList[dialedUser],
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
             }

@@ -1,6 +1,6 @@
 const log = require('app/init/logger')(module),
     notifyB24User = require('app/lib/bitrix/notifyB24Users'),
-    bitrix24Config = require('app/config/bitrix'),
+    bitrixConfig = require('app/config/bitrix'),
     getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
     finishB24Call = require('app/lib/bitrix/finishB24Call'),
@@ -10,7 +10,7 @@ let hangup = (headers, cache) => {
 
     let bitrix24Info = {
         callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
-        url: headers['variable_bitrix24_url']
+        url: bitrixConfig.url
     }
 
     getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
@@ -52,7 +52,7 @@ let hangup = (headers, cache) => {
                     bitrix24Info['rec_file'] = headers['variable_record_name'];
                 }
 
-                getB24EmployeeList(bitrix24Info['url'], cache)
+                getB24EmployeeList(cache)
                     .then(res => {
                         let employeeList = res['phone_to_id'];
 
@@ -65,7 +65,7 @@ let hangup = (headers, cache) => {
                         setTimeout(() => {
                             finishB24Call(bitrix24Info, cache);
 
-                            if (bitrix24Config.showIMNotification && bitrix24Info['sip_code'] !== '200') {
+                            if (bitrixConfig.showIMNotification && bitrix24Info['sip_code'] !== '200') {
 
                                 let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
                                 let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
