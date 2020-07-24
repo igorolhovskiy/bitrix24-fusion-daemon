@@ -11,17 +11,16 @@ let finishB24Call = (callInfo, cache) => {
         return;
     }
 
+    if (cache.get('finishedCall_' + callInfo['b24uuid']) === 'true') {
+        log('Call ' + callInfo['b24uuid'] + ' is already finished on Bitrix, exiting');
+        return;
+    }
+
     if (callInfo['userID'] === bitrixConfig.defaultUserID) {
         log('Registering finished call ' + callInfo['b24uuid'] + ' to default user');
     }
 
-    if (!cache.get('uuid_' + callInfo['callUuid'] + '_1') || !cache.get('uuid_' + callInfo['callUuid'] + '_2')) {
-        log("Finished call is aready deleted from cache, exiting...");
-        return;
-    }
-
-    cache.del('uuid_' + callInfo['callUuid'] + '_1');
-    cache.del('uuid_' + callInfo['callUuid'] + '_2');
+    cache.put('finishedCall_' +  callInfo['b24uuid'], 'true', 5 * 1000);
 
     let requestURL = bitrixConfig.url + '/telephony.externalcall.finish.json?'
         + 'CALL_ID=' + callInfo['b24uuid']
