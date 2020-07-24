@@ -26,8 +26,10 @@ let create = (headers, cache) => {
             let isCallRegistered = false;
 
             if (employeeList[legBNumber]) {
+
                 isCallRegistered = true;
                 log("Registering inbound call to extension " + legBNumber);
+
                 let bitrix24Info = {
                     callerid: legANumber,
                     calleeid: legBNumber,
@@ -46,8 +48,10 @@ let create = (headers, cache) => {
             }
 
             if (employeeList[legANumber]) {
+
                 isCallRegistered = true;
                 log("Registering outbound call from extension " + legANumber);
+
                 let bitrix24Info = {
                     callerid: legBNumber,
                     calleeid: legANumber,
@@ -73,7 +77,7 @@ let create = (headers, cache) => {
                 let calleeID = legBNumber;
 
                 // Check if legA lenght > localNumber lenght and adjust call type to inbound
-                if (legANumber.lenght > fusionConfig.localNumberLength) {
+                if (legANumber.length > fusionConfig.localNumberLength) {
                     callType = 2;
                     callerID = legANumber;
                     calleeID = legBNumber;
@@ -89,12 +93,11 @@ let create = (headers, cache) => {
 
                 createB24Call(bitrix24Info, cache)
                     .then(b24callInfo => {                    
-                        log("Registered generic call " + bitrix24Info['callUuid'] + " -> " + b24callInfo['uuid']);
+                        log("Registered generic call type  " + callType + " " + bitrix24Info['callUuid'] + " -> " + b24callInfo['uuid']);
                     }).catch(err => {
                         // If we can't get call UUID - do nothing. Really
                         log("Registering generic call " + bitrix24Info['callUuid'] + " failed: " + err);
                     });
-
             }
         })
         .catch(err => {
