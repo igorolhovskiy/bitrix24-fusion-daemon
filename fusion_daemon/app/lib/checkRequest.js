@@ -1,5 +1,6 @@
-const headersProcess = require('app/init/fsheadersprocess'),
-    restConfig = require('app/config/rest');
+const log = require('app/init/logger')(module),
+      headersProcess = require('app/init/fsheadersprocess'),
+      restConfig = require('app/config/rest');
 
 
 let checkRequest = (rawHeaders) => {
@@ -12,6 +13,17 @@ let checkRequest = (rawHeaders) => {
         return false;
     }
 
+    if (headers['variable_bitrix24_channel'] === 'caller') {
+        log("Processing CALLER channel");
+        return headers;
+    }
+
+    if (headers['variable_bitrix24_channel'] === 'callee') {
+        log("Processing CALLEE channel");
+        return headers;
+    }
+
+    log("Processing ZOMBIE channel!");
     return headers;
 }
 

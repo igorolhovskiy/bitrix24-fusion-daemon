@@ -18,7 +18,7 @@ let createB24CallInfo = (callInfo, cache) => {
         return b24CallInfo;
     }
 
-    b24Callnfo = new Promise((resolve, reject) => {
+    bitrix24Callnfo = new Promise((resolve, reject) => {
         if (!callInfo['userID']) {
             reject("createB24callInfo No UserID provided!");
             return;
@@ -87,15 +87,15 @@ let createB24CallInfo = (callInfo, cache) => {
             resolve({
                 uuid: registeredCall['CALL_ID'],
                 type: callInfo['type'],
-                user: callInfo['userID'],
+                userID: callInfo['userID'],
                 phone: callInfo['callerid']
             });
         });
     });
 
-    cache.put('uuid_' + callInfo['callUuid'] + "_" + callInfo['type'], b24Callnfo, 3 * 60 * 60 * 1000); // Store for 3h
+    cache.put('uuid_' + callInfo['callUuid'] + "_" + callInfo['type'], bitrix24Callnfo, 3 * 60 * 60 * 1000); // Store for 3h
 
-    return b24Callnfo;
+    return bitrix24Callnfo;
 }
 
 module.exports = createB24CallInfo;

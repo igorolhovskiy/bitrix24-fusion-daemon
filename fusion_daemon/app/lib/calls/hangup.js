@@ -10,7 +10,6 @@ let hangup = (headers, cache) => {
 
     let bitrix24Info = {
         callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
-        url: bitrixConfig.url
     }
 
     getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {

@@ -2,6 +2,7 @@ const log = require('app/init/logger')(module),
     getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
     hideB24CallScreen = require('app/lib/bitrix/hideB24CallScreen'),
+    updateB24CallInfo = require('app/lib/bitrix/updateB24CallInfo'),
     notifyB24User = require('app/lib/bitrix/notifyB24Users');
 
 let bridge = (headers, cache) => {
@@ -29,6 +30,8 @@ let bridge = (headers, cache) => {
                 userID: employeeList[dialedUser],
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
             }
+
+            updateB24CallInfo(bitrix24Info);
             
             // Call function 500 ms after to make sure cache is populated
             setTimeout(() => {

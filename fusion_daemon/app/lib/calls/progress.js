@@ -3,6 +3,7 @@ const log = require('app/init/logger')(module),
       getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
       showB24CallScreen = require('app/lib/bitrix/showB24CallScreen'),
       notifyB24User = require('app/lib/bitrix/notifyB24Users'),
+      updateB24CallInfo = require('app/lib/bitrix/updateB24CallInfo'),
       bitrixConfig = require('app/config/bitrix');
 
 
@@ -23,6 +24,9 @@ let progress = (headers, cache) => {
                 userID: employeeList[dialedUser],
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
             }
+
+            updateB24CallInfo(bitrix24Info);
+
             // Call function 500 ms after to make sure cache is populated
             setTimeout(() => {
                 getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
