@@ -61,6 +61,11 @@ let hangup = (headers, cache) => {
                             bitrix24Info['userID'] = employeeList[dialedUser];
                         }
 
+                        if (typeof bitrix24Info['userID'] === 'undefined') {
+                            log("Setting generic userID for this call. Actually, should not happen");
+                            bitrix24Info['userID'] = bitrixConfig.defaultUserID;
+                        }
+
                         setTimeout(() => {
                             finishB24Call(bitrix24Info, cache);
 
