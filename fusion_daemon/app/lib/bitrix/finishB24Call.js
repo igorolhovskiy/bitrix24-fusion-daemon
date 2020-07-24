@@ -7,30 +7,30 @@ const request = require('urllib'),
 let finishB24Call = (callInfo, cache) => {
 
     if (!callInfo['b24uuid']) {
-        log("No Bitrix24 UUID provided!");
+        log('No Bitrix24 UUID provided!');
         return;
     }
 
     if (callInfo['userID'] === bitrixConfig.defaultUserID) {
-        log("Registering finished call to default user");
+        log('Registering finished call ' + callInfo['b24uuid'] + ' to default user');
     }
 
-    cache.del("uuid_" + callInfo['callUuid'] + "_1");
-    cache.del("uuid_" + callInfo['callUuid'] + "_2");
+    cache.del('uuid_' + callInfo['callUuid'] + '_1');
+    cache.del('uuid_' + callInfo['callUuid'] + '_2');
 
-    let requestURL = bitrixConfig.url + "/telephony.externalcall.finish.json?"
-        + "CALL_ID=" + callInfo['b24uuid']
-        + "&USER_ID=" + callInfo['userID']
-        + "&DURATION=" + callInfo['duration']
-        + "&STATUS_CODE=" + callInfo['sip_code']
-        + "&ADD_TO_CHAT=0";
+    let requestURL = bitrixConfig.url + '/telephony.externalcall.finish.json?'
+        + 'CALL_ID=' + callInfo['b24uuid']
+        + '&USER_ID=' + callInfo['userID']
+        + '&DURATION=' + callInfo['duration']
+        + '&STATUS_CODE=' + callInfo['sip_code']
+        + '&ADD_TO_CHAT=0';
 
     if (bitrixConfig.appendRecording && callInfo['rec_file'] && fusionConfig.recordingPath) {
 
         let recordingPath = callInfo['rec_path'].replace(fusionConfig.localRecordingPath, '');
-        recordingPath = fusionConfig.recordingPath + recordingPath + "/" + callInfo['rec_file'];
+        recordingPath = fusionConfig.recordingPath + recordingPath + '/' + callInfo['rec_file'];
 
-        requestURL = requestURL + "&RECORD_URL=" + recordingPath;
+        requestURL = requestURL + '&RECORD_URL=' + recordingPath;
     }
 
     request.request(requestURL, (err, data, res) => {
@@ -41,8 +41,8 @@ let finishB24Call = (callInfo, cache) => {
         }
 
         if (res.statusCode !== 200) {
-            log("Server failed to answer with " + res.statusCode + " code");
-            log(requestURL + " -> " + data.toString());
+            log('Server failed to answer with ' + res.statusCode + ' code');
+            log(requestURL + ' -> ' + data.toString());
             return;
         }
 
@@ -51,12 +51,12 @@ let finishB24Call = (callInfo, cache) => {
         try {
             finishCall = JSON.parse(data.toString());
         } catch (e) {
-            log("Answer from server is not JSON");
+            log('Answer from server is not JSON');
             return;
         }
 
         if (typeof finishCall.result === 'undefined') {
-            log("Missing result section in answer");
+            log('Missing result section in answer');
             return;
         }
 
@@ -65,7 +65,7 @@ let finishB24Call = (callInfo, cache) => {
             return;
         }
 
-        log("Call registration failed with " + JSON.stringify(finishCall, null, 2));
+        log('Call registration failed with ' + JSON.stringify(finishCall, null, 2));
     });
 }
 

@@ -8,6 +8,11 @@ const log = require('app/init/logger')(module),
 
 let hangup = (headers, cache) => {
 
+    if (headers['variable_bitrix24_channel'] === 'callee' && headers['Hangup-Cause'] === 'LOSE_RACE') {
+        log("Not processing hangup for LOSE_RACE callee");
+        return;
+    }
+
     let bitrix24Info = {
         callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
     }
@@ -24,8 +29,13 @@ let hangup = (headers, cache) => {
                     || headers['variable_sip_invite_failure_status']
                     || headers['variable_last_bridge_proto_specific_hangup_cause'];
 
+                if (headers['Hangup-Cause'] === "LOSE_RACE") {
+                    bitrix24Info['sip_code'] = "487";
+                }
+
                 if (!bitrix24Info['sip_code'] || bitrix24Info['sip_code'] === '') {
                     log("Cannot get correct hangup code, using 486");
+                    log(JSON.stringify(headers, null, 2));
                     bitrix24Info['sip_code'] = "486";
                 }
                 bitrix24Info['sip_code'] = bitrix24Info['sip_code'].replace('sip:', '');

@@ -15,13 +15,13 @@ let getB24CallInfo = (callInfo, cache) => {
 
     let tmpB24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_1");
     if (tmpB24CallInfo) {
-        log("Outbound call is exists in cache, adding...");
+        log("Outbound (1) call exists in cache, adding...");
         b24CallInfo.push(tmpB24CallInfo);
     }
 
     tmpB24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_2");
     if (tmpB24CallInfo) {
-        log("Inbound call is exists in cache, adding...");
+        log("Inbound (2) call exists in cache, adding...");
         b24CallInfo.push(tmpB24CallInfo);
     }
 
