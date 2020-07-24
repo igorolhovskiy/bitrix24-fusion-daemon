@@ -15,6 +15,11 @@ let finishB24Call = (callInfo, cache) => {
         log('Registering finished call ' + callInfo['b24uuid'] + ' to default user');
     }
 
+    if (!cache.get('uuid_' + callInfo['callUuid'] + '_1') || !cache.get('uuid_' + callInfo['callUuid'] + '_2')) {
+        log("Finished call is aready deleted from cache, exiting...");
+        return;
+    }
+
     cache.del('uuid_' + callInfo['callUuid'] + '_1');
     cache.del('uuid_' + callInfo['callUuid'] + '_2');
 
