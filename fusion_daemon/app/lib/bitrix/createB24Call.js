@@ -18,7 +18,7 @@ let createB24CallInfo = (callInfo, cache) => {
         return b24CallInfo;
     }
 
-    bitrix24Callnfo = new Promise((resolve, reject) => {
+    let bitrix24Callnfo = new Promise((resolve, reject) => {
         if (!callInfo['userID']) {
             reject("createB24callInfo No UserID provided!");
             return;
