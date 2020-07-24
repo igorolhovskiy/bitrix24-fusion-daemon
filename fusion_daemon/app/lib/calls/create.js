@@ -40,7 +40,7 @@ let create = (headers, cache) => {
 
                 createB24Call(bitrix24Info, cache)
                     .then((b24callInfo) => {                    
-                        log("Registered inbound call type  " + bitrix24Info['type'] + " " + bitrix24Info['callUuid'] + " -> " + b24callInfo['uuid']);
+                        log("Registered inbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']);
                     }).catch((err) => {
                         // If we can't get call UUID - do nothing. Really
                         log("Registering inbound call " + bitrix24Info['callUuid'] + " failed: " + err);
@@ -62,7 +62,7 @@ let create = (headers, cache) => {
 
                 createB24Call(bitrix24Info, cache)
                     .then(b24callInfo => {                    
-                        log("Registered outbound call type  " + bitrix24Info['type'] + " " + bitrix24Info['callUuid'] + " -> " + b24callInfo['uuid']);
+                        log("Registered outbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']);
                     }).catch(err => {
                         // If we can't get call UUID - do nothing. Really
                         log("Registering outbound call " + bitrix24Info['callUuid'] + " failed: " + err);
@@ -93,7 +93,7 @@ let create = (headers, cache) => {
 
                 createB24Call(bitrix24Info, cache)
                     .then(b24callInfo => {                    
-                        log("Registered generic call type " + callType + " " + bitrix24Info['callUuid'] + " -> " + b24callInfo['uuid']);
+                        log("Registered generic call "  + bitrix24Info['callUuid'] + "_" + callType + " -> " + b24callInfo['uuid']);
                     }).catch(err => {
                         // If we can't get call UUID - do nothing. Really
                         log("Registering generic call " + bitrix24Info['callUuid'] + " failed: " + err);
