@@ -17,7 +17,7 @@ let hangup = (headers, cache) => {
             .then(b24callInfo => {
 
                 bitrix24Info['b24uuid'] = b24callInfo['uuid'];
-                bitrix24Info['userID'] = b24callInfo['user'];
+                bitrix24Info['userID'] = b24callInfo['userID'];
 
                 bitrix24Info['sip_code'] = headers['variable_sip_term_status'] 
                     || headers['variable_proto_specific_hangup_cause'] 
