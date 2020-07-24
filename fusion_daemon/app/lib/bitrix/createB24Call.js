@@ -14,7 +14,7 @@ let createB24CallInfo = (callInfo, cache) => {
 
     let b24CallInfo = cache.get('uuid_' + callInfo['callUuid'] + "_" + callInfo['type']);
     if (b24CallInfo) {
-        log("Call is exists in cache, returning...");
+        log("Call exists in cache, returning...");
         return b24CallInfo;
     }
 
