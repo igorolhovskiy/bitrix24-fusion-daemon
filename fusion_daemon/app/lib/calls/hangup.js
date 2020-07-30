@@ -39,12 +39,22 @@ let hangup = (headers, cache) => {
                 }
 
     
-                if ((!bitrix24Info['sip_code'] 
-                    || bitrix24Info['sip_code'] === '')
-                    && headers['variable_sip_hangup_phrase'] === 'OK' 
-                    && headers['variable_hangup_cause'] === 'NORMAL_CLEARING' 
-                    && headers.hasOwnProperty('variable_rtp_audio_in_raw_bytes')) {
+                if (!bitrix24Info['sip_code'] 
+                    || bitrix24Info['sip_code'] === '') {
+
+                    // Call is answered.
+                    if (headers['variable_sip_hangup_phrase'] === 'OK' 
+                            && headers['variable_hangup_cause'] === 'NORMAL_CLEARING' 
+                            && headers.hasOwnProperty('variable_rtp_audio_in_raw_bytes')) {
                         bitrix24Info['sip_code'] = "200";
+                    }
+
+                    // AttXfer
+                    if (headers['variable_transfer_disposition'] === 'replaced'
+                            && headers['variable_hangup_cause'] === 'NORMAL_CLEARING'
+                            && headers.hasOwnProperty('variable_rtp_audio_in_raw_bytes')) {
+                        bitrix24Info['sip_code'] = "200";
+                    }
                 }
 
 
