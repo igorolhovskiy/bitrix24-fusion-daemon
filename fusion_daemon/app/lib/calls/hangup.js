@@ -38,6 +38,16 @@ let hangup = (headers, cache) => {
                     bitrix24Info['sip_code'] = "487";
                 }
 
+    
+                if ((!bitrix24Info['sip_code'] 
+                    || bitrix24Info['sip_code'] === '')
+                    && headers['variable_sip_hangup_phrase'] === 'OK' 
+                    && headers['variable_hangup_cause'] === 'NORMAL_CLEARING' 
+                    && headers.hasOwnProperty('variable_rtp_audio_in_raw_bytes')) {
+                        bitrix24Info['sip_code'] = "200";
+                }
+
+
                 if (!bitrix24Info['sip_code'] || bitrix24Info['sip_code'] === '') {
                     log("Cannot get correct hangup code, using 486");
                     log(JSON.stringify(headers, null, 2));
