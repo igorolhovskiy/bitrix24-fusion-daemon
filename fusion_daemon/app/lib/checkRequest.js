@@ -23,7 +23,7 @@ let checkRequest = (rawHeaders) => {
         return headers;
     }
 
-    log("Processing ZOMBIE channel!");
+    log("Processing ZOMBIE channel: " + JSON.stringify(headers, null, 2));
     return headers;
 }
 

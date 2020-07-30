@@ -18,7 +18,7 @@ let finishB24Call = (callInfo, cache) => {
 
     log('Registering finished call ' + callInfo['b24uuid'] + ' to userID: ' + callInfo['userID']);
 
-    cache.put('finishedCall_' +  callInfo['b24uuid'], 'true', 5 * 1000);
+    cache.put('finishedCall_' +  callInfo['b24uuid'], 'true', 60 * 1000);
 
     let requestURL = bitrixConfig.url + '/telephony.externalcall.finish.json?'
         + 'CALL_ID=' + callInfo['b24uuid']
@@ -63,7 +63,7 @@ let finishB24Call = (callInfo, cache) => {
         }
 
         if (finishCall.result['CALL_ID']) {
-            log('Call ' + finishCall.result['CALL_ID'] + ' successfully registered');
+            log('Call ' + JSON.stringify(callInfo) + ' successfully registered');
             return;
         }
 
