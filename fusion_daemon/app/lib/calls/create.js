@@ -43,7 +43,7 @@ let create = (headers, cache) => {
                         log("Created inbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']);
                     }).catch((err) => {
                         // If we can't get call UUID - do nothing. Really
-                        log("Created inbound call " + bitrix24Info['callUuid'] + " failed: " + err);
+                        log("ERROR creation of inbound call " + bitrix24Info['callUuid'] + ": " + err);
                     });
             }
 
@@ -65,7 +65,7 @@ let create = (headers, cache) => {
                         log("Created outbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']);
                     }).catch(err => {
                         // If we can't get call UUID - do nothing. Really
-                        log("Created outbound call " + bitrix24Info['callUuid'] + " failed: " + err);
+                        log("ERROR creation of outbound call " + bitrix24Info['callUuid'] + ": " + err);
                     });
             }
 

@@ -13,6 +13,11 @@ let hangup = (headers, cache) => {
         return;
     }
 
+    if (headers['variable_transfer_disposition'] === 'recv_replace') {
+        log("Not processing hangup for transferred calls");
+        return;
+    }
+
     let bitrix24Info = {
         callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
     }
@@ -20,13 +25,6 @@ let hangup = (headers, cache) => {
     getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
         legInfo
             .then(b24callInfo => {
-
-                let registerDelay = 500;
-
-                if (b24callInfo['type'] === 2 && headers['variable_bitrix24_channel'] === 'caller') { // We add extra time of inbound call of caller.
-                    registerDelay = 3500;
-                    log("We add extra time of inbound call of caller");
-                }
 
                 bitrix24Info['b24uuid'] = b24callInfo['uuid'];
                 bitrix24Info['userID'] = b24callInfo['userID'];
@@ -57,8 +55,8 @@ let hangup = (headers, cache) => {
                 let dialedUser = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
 
                 if (b24callInfo['type'] === 2)  {// Get user for inbound call
-                    dialedUser = headers['last_sent_callee_id_number'] 
-                        || headers['Other-Leg-Destination-Number'] 
+                    dialedUser = headers['Caller-Callee-ID-Number'] 
+                        || headers['variable_dialed_extension'] 
                         || headers['variable_dialed_user'];
                 }
 
@@ -71,11 +69,13 @@ let hangup = (headers, cache) => {
                 getB24EmployeeList(cache)
                     .then(res => {
                         let employeeList = res['phone_to_id'];
+                        let requestDelay = 3500;
 
-                    // We did get user from request.
+                        // We did get user from request.
                         if (employeeList[dialedUser]) {
                             log("User with extension " + dialedUser + " found, using userID: " + employeeList[dialedUser]);
                             bitrix24Info['userID'] = employeeList[dialedUser];
+                            requestDelay = 500; // If we found user - register it more quick :)
                         }
 
                         if (!bitrix24Info.hasOwnProperty('userID')) {
@@ -98,7 +98,7 @@ let hangup = (headers, cache) => {
                                     }
                                 });
                             }
-                        }, registerDelay);
+                        }, requestDelay);
                     })
                     .catch(err => {
                         log("Hangup: " + err);
