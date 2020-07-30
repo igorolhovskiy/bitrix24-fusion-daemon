@@ -21,6 +21,13 @@ let hangup = (headers, cache) => {
         legInfo
             .then(b24callInfo => {
 
+                let registerDelay = 500;
+
+                if (b24callInfo['type'] === 2 && headers['variable_bitrix24_channel'] === 'caller') { // We add extra time of inbound call of caller.
+                    registerDelay = 3500;
+                    log("We add extra time of inbound call of caller");
+                }
+
                 bitrix24Info['b24uuid'] = b24callInfo['uuid'];
                 bitrix24Info['userID'] = b24callInfo['userID'];
 
@@ -67,11 +74,11 @@ let hangup = (headers, cache) => {
 
                     // We did get user from request.
                         if (employeeList[dialedUser]) {
-                            log("User with extension " + dialedUser + " found, using it");
+                            log("User with extension " + dialedUser + " found, using userID: " + employeeList[dialedUser]);
                             bitrix24Info['userID'] = employeeList[dialedUser];
                         }
 
-                        if (typeof bitrix24Info['userID'] === 'undefined') {
+                        if (!bitrix24Info.hasOwnProperty('userID')) {
                             log("Setting generic userID for this call. Actually, should not happen");
                             bitrix24Info['userID'] = bitrixConfig.defaultUserID;
                         }
@@ -91,7 +98,7 @@ let hangup = (headers, cache) => {
                                     }
                                 });
                             }
-                        }, 500);
+                        }, registerDelay);
                     })
                     .catch(err => {
                         log("Hangup: " + err);

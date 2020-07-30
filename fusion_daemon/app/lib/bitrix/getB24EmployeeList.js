@@ -8,6 +8,12 @@ const log = require('app/init/logger')(module),
 
 function getB24EmployeeList(cache) {
 
+    if (typeof cache === 'undefined') {
+        return new Promise((resolve, reject) => {
+            reject("getB24EmployeeList: Cache is undefined!");
+        });
+    }
+
     let employeeList = cache.get('employeeList');
     
     if (employeeList) {

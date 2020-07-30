@@ -16,9 +16,7 @@ let finishB24Call = (callInfo, cache) => {
         return;
     }
 
-    if (callInfo['userID'] === bitrixConfig.defaultUserID) {
-        log('Registering finished call ' + callInfo['b24uuid'] + ' to default user');
-    }
+    log('Registering finished call ' + callInfo['b24uuid'] + ' to userID: ' + callInfo['userID']);
 
     cache.put('finishedCall_' +  callInfo['b24uuid'], 'true', 5 * 1000);
 

@@ -1,4 +1,5 @@
 const log = require('app/init/logger')(module),
+    bitrixConfig = require('app/config/bitrix'),
     getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
     hideB24CallScreen = require('app/lib/bitrix/hideB24CallScreen'),
@@ -31,7 +32,7 @@ let bridge = (headers, cache) => {
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
             }
 
-            updateB24CallInfo(bitrix24Info);
+            updateB24CallInfo(bitrix24Info, cache);
             
             // Call function 500 ms after to make sure cache is populated
             setTimeout(() => {
@@ -50,7 +51,7 @@ let bridge = (headers, cache) => {
                                     }
                                 });
     
-                                if (bitrix24Config.showIMNotification) {
+                                if (bitrixConfig.showIMNotification) {
 
                                     let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
                                     let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];

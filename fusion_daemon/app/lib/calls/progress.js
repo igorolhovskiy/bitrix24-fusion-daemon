@@ -25,7 +25,7 @@ let progress = (headers, cache) => {
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
             }
 
-            updateB24CallInfo(bitrix24Info);
+            updateB24CallInfo(bitrix24Info, cache);
 
             // Call function 500 ms after to make sure cache is populated
             setTimeout(() => {
