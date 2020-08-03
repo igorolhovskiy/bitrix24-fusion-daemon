@@ -4,8 +4,8 @@ const log = require('app/init/logger')(module),
       showB24CallScreen = require('app/lib/bitrix/showB24CallScreen'),
       notifyB24User = require('app/lib/bitrix/notifyB24Users'),
       updateB24CallInfo = require('app/lib/bitrix/updateB24CallInfo'),
+      getB24ContactInfo = require('app/lib/bitrix/getB24ContactInfo'),
       bitrixConfig = require('app/config/bitrix');
-
 
 let progress = (headers, cache) => {
 
@@ -46,14 +46,32 @@ let progress = (headers, cache) => {
                                 if (bitrixConfig.showIMNotification) {
 
                                     let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
-                                    let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
 
-                                    bitrix24Info['message'] = "Incoming call from " + legAName + " <" + legANumber + ">";
-                                    
-                                    notifyB24User(bitrix24Info, cache, (err) => {
-                                        if (err) {
-                                            log("notifyB24User failed with " + err);
-                                        }
+                                    getB24ContactInfo({
+                                            callerid: legANumber,
+                                            calleeid: dialedUser
+                                            }, cache)
+                                        .then(contactInfo => {
+                                            
+                                            bitrix24Info['message'] = "Incoming call from " + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + " <" + legANumber + ">";
+
+                                            notifyB24User(bitrix24Info, cache, (err) => {
+                                                if (err) {
+                                                    log("notifyB24User failed with " + err);
+                                                }
+                                            });
+                                        })
+                                        .catch(err => {
+                                            log(err);
+
+                                            let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
+                                            bitrix24Info['message'] = "Incoming call from " + legAName + " <" + legANumber + ">";
+
+                                            notifyB24User(bitrix24Info, cache, (err) => {
+                                                if (err) {
+                                                    log("notifyB24User failed with " + err);
+                                                }
+                                            });
                                     });
                                 }
                             }

@@ -31,7 +31,6 @@ function getB24EmployeeList(cache) {
 
             if (err) {
                 reject(err);
-                return;
             }
 
             if (res.statusCode !== 200) {
@@ -44,12 +43,10 @@ function getB24EmployeeList(cache) {
                 userList = JSON.parse(userList);
             } catch (e) {
                 reject("getB24EmployeeList Answer from server is not JSON");
-                return;
             }
 
             if (typeof userList.result === 'undefined') {
                 reject("getB24EmployeeList Missing result section in answer");
-                return;
             }
 
             userList = userList.result;

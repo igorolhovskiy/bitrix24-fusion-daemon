@@ -2,7 +2,7 @@ const log = require('app/init/logger')(module),
     bitrixConfig = require('app/config/bitrix'),
     request = require('urllib');
 
-let notifyB24Users = (bitrix24Info, cache ,callback) => {
+let notifyB24Users = (bitrix24Info, cache, callback) => {
 
     // Get all showCallScreens from cache
 
@@ -35,13 +35,12 @@ let notifyB24Users = (bitrix24Info, cache ,callback) => {
         let currentTS = Math.floor(Date.now() / 1000);
 
         if (cache.get('notify_' + currentTS) === requestURL) {
-            log("Duplicate notification: <" + bitrix24Info['message'] + "> to user " + user);
             return;
         }
 
         log("Showing notification: <" + bitrix24Info['message'] + "> to user " + user);
         
-        cache.put('notify_' + currentTS, requestURL, 1000);
+        cache.put('notify_' + currentTS, requestURL, 2 * 1000); // 2 sec for overlap
 
         request.request(requestURL, (err) => {
             if (err) {

@@ -65,9 +65,7 @@ let originateB24Call = (requestBody, cache, callback) => {
                 callback('originateB24Call ' + res);
             });
         })
-        .catch(err => {
-            callback(err);
-        });
+        .catch(err => callback(err));
 }
 
 module.exports = originateB24Call;

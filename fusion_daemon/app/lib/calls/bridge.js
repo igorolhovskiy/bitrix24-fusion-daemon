@@ -4,6 +4,7 @@ const log = require('app/init/logger')(module),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
     hideB24CallScreen = require('app/lib/bitrix/hideB24CallScreen'),
     updateB24CallInfo = require('app/lib/bitrix/updateB24CallInfo'),
+    getB24ContactInfo = require('app/lib/bitrix/getB24ContactInfo'),
     notifyB24User = require('app/lib/bitrix/notifyB24Users');
 
 let bridge = (headers, cache) => {
@@ -54,13 +55,32 @@ let bridge = (headers, cache) => {
                                 if (bitrixConfig.showIMNotification) {
 
                                     let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
-                                    let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
+                         
+                                    getB24ContactInfo({
+                                            callerid: legANumber,
+                                            calleeid: dialedUser
+                                            }, cache)
+                                        .then(contactInfo => {
+                                            
+                                            bitrix24Info['message'] = "Incoming call from " + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + " <" + legANumber + "> was answered by " + dialedUser;
 
-                                    bitrix24Info['message'] = "Incoming call from " + legAName + " <" + legANumber + "> was answered by " + dialedUser;
-                                    notifyB24User(bitrix24Info, cache, (err) => {
-                                        if (err) {
-                                            log("bridge notifyB24User failed with " + err);
-                                        }
+                                            notifyB24User(bitrix24Info, cache, (err) => {
+                                                if (err) {
+                                                    log("notifyB24User failed with " + err);
+                                                }
+                                            });
+                                        })
+                                        .catch(err => {
+                                            log(err);
+
+                                            let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
+                                            bitrix24Info['message'] = "Incoming call from " + legAName + " <" + legANumber + "> was answered by " + dialedUser;
+
+                                            notifyB24User(bitrix24Info, cache, (err) => {
+                                                if (err) {
+                                                    log("notifyB24User failed with " + err);
+                                                }
+                                            });
                                     });
                                 }
                             }

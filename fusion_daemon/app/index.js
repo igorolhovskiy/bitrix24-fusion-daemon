@@ -14,7 +14,9 @@ const cache = require('memory-cache'),
 
     bitrixConfig = require('app/config/bitrix'),
     restConfig = require('app/config/rest'),
-    originateB24Call = require('app/lib/bitrix/originateB24Call');
+    originateB24Call = require('app/lib/bitrix/originateB24Call'),
+
+    headersProcess = require('app/init/fsheadersprocess');
 
 
 if (bitrixConfig.url) {

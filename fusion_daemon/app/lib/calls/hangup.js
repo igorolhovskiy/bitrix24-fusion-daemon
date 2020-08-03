@@ -4,6 +4,8 @@ const log = require('app/init/logger')(module),
     getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
     getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
     finishB24Call = require('app/lib/bitrix/finishB24Call'),
+    getB24ContactInfo = require('app/lib/bitrix/getB24ContactInfo'),
+    commentB24Timeline = require('app/lib/bitrix/commentB24Timeline'),
     hangupCauseTable = require('app/config/freeswitch').hangupCause;
 
 let hangup = (headers, cache) => {
@@ -106,27 +108,70 @@ let hangup = (headers, cache) => {
                         setTimeout(() => {
                             finishB24Call(bitrix24Info, cache);
 
+                            let legANumber = headers['Caller-Orig-Caller-ID-Number'] 
+                                    || headers['Caller-Caller-ID-Number'];
+
+                            // Transferred calls situation
+                            if (bitrixConfig.showIMNotification && headers['Caller-Transfer-Source']) {
+
+                                let legBNumber = headers['variable_last_sent_callee_id_number']
+                                    || headers['Caller-Callee-ID-Number'] 
+                                    || headers['Other-Leg-Callee-ID-Number'];
+
+                                getB24ContactInfo({
+                                            callerid: legANumber,
+                                            calleeid: legBNumber
+                                        }, cache)
+                                    .then(contactInfo => {
+
+                                        let contact24Info = {
+                                            message: "Call was transferred to " + legBNumber,
+                                            contactId: contactInfo['ID']
+                                        };
+                                        
+                                        commentB24Timeline(contact24Info, cache, (err) => {
+                                            if (err) {
+                                                log(err);
+                                            }
+                                        });
+                                    })
+                                    .catch(err => log(err));
+                            }
+
                             if (bitrixConfig.showIMNotification && bitrix24Info['sip_code'] !== '200') {
 
-                                let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
-                                let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
+                                getB24ContactInfo({
+                                            callerid: legANumber,
+                                            calleeid: dialedUser
+                                        }, cache)
+                                    .then(contactInfo => {
+                                        
+                                        bitrix24Info['message'] = "Call from " + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + " <" + legANumber + "> was missed!";
 
-                                bitrix24Info['message'] = "Call from " + legAName + " <" + legANumber + "> was missed!";
-                                notifyB24User(bitrix24Info, cache, (err) => {
-                                    if (err) {
-                                        log("notifyB24User failed with " + err);
-                                    }
+                                        notifyB24User(bitrix24Info, cache, (err) => {
+                                            if (err) {
+                                                log("notifyB24User failed with " + err);
+                                            }
+                                        });
+                                    })
+                                    .catch(err => {
+                                        log(err);
+
+                                        let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
+                                        bitrix24Info['message'] = "Call from " + legAName + " <" + legANumber + "> was missed!";
+
+                                        notifyB24User(bitrix24Info, cache, (err) => {
+                                            if (err) {
+                                                log("notifyB24User failed with " + err);
+                                            }
+                                        });
                                 });
                             }
                         }, requestDelay);
                     })
-                    .catch(err => {
-                        log("Hangup: " + err);
-                    });
+                    .catch(err => log("Hangup: " + err));
             })
-            .catch(err => {
-                log("Hangup: " + err);
-            });
+            .catch(err => log("Hangup: " + err));
     });
 }
 
