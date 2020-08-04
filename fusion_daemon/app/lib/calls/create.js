@@ -7,10 +7,10 @@ const log = require('app/init/logger')(module),
 let create = (headers, cache) => {
 
     // Get correct LegA/LegB numbers
-
     let legBNumber = headers['variable_callee_id_number'] || headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
     let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
 
+    // Adjust click2call case
     if (headers['Caller-RDNIS'] && headers['Caller-Source'] === 'src/switch_ivr_originate.c') {
         log("Click2Call initiated call, adjusting legA/B numbers...");
         legBNumber = legANumber;
@@ -39,12 +39,9 @@ let create = (headers, cache) => {
                 }
 
                 createB24Call(bitrix24Info, cache)
-                    .then((b24callInfo) => {                    
-                        log("Created inbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']);
-                    }).catch((err) => {
-                        // If we can't get call UUID - do nothing. Really
-                        log("ERROR creation of inbound call " + bitrix24Info['callUuid'] + ": " + err);
-                    });
+                    .then(b24callInfo => log("Created inbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']))
+                    // If we can't get call UUID - do nothing. Really
+                    .catch(err => log("ERROR creation of inbound call " + bitrix24Info['callUuid'] + ": " + err));
             }
 
             if (employeeList[legANumber]) {
@@ -61,12 +58,9 @@ let create = (headers, cache) => {
                 }
 
                 createB24Call(bitrix24Info, cache)
-                    .then(b24callInfo => {                    
-                        log("Created outbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']);
-                    }).catch(err => {
-                        // If we can't get call UUID - do nothing. Really
-                        log("ERROR creation of outbound call " + bitrix24Info['callUuid'] + ": " + err);
-                    });
+                    .then(b24callInfo => log("Created outbound call " + bitrix24Info['callUuid'] + "_" + bitrix24Info['type'] + " -> " + b24callInfo['uuid']))
+                    // If we can't get call UUID - do nothing. Really
+                    .catch(err => log("ERROR creation of outbound call " + bitrix24Info['callUuid'] + ": " + err));
             }
 
             if (!isCallRegistered) {
@@ -92,17 +86,12 @@ let create = (headers, cache) => {
                 }
 
                 createB24Call(bitrix24Info, cache)
-                    .then(b24callInfo => {                    
-                        log("Created generic call "  + bitrix24Info['callUuid'] + "_" + callType + " -> " + b24callInfo['uuid']);
-                    }).catch(err => {
-                        // If we can't get call UUID - do nothing. Really
-                        log("Created generic call " + bitrix24Info['callUuid'] + " failed: " + err);
-                    });
+                    .then(b24callInfo => log("Created generic call "  + bitrix24Info['callUuid'] + "_" + callType + " -> " + b24callInfo['uuid']))
+                    // If we can't get call UUID - do nothing. Really
+                    .catch(err => log("Created generic call " + bitrix24Info['callUuid'] + " failed: " + err));
             }
         })
-        .catch(err => {
-            log("create Cannot get employeeList: " + err);
-        });
+        .catch(err => log("create Cannot get employeeList: " + err));
 }
 
 module.exports = create;

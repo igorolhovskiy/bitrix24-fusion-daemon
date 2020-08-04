@@ -13,14 +13,12 @@ const cache = require('memory-cache'),
     callHangup = require('app/lib/calls/hangup'),
 
     bitrixConfig = require('app/config/bitrix'),
-    restConfig = require('app/config/rest'),
-    originateB24Call = require('app/lib/bitrix/originateB24Call'),
-
-    headersProcess = require('app/init/fsheadersprocess');
-
+    restConfig = require('app/config/rest');
+    originateB24Call = require('app/lib/bitrix/originateB24Call');
 
 if (bitrixConfig.url) {
 
+    // FreeSwitch listener part
     freeswitch
         .on('esl::event::CHANNEL_PROGRESS::*', function(e) {
             let headers = checkRequest(e.headers);
@@ -47,10 +45,10 @@ if (bitrixConfig.url) {
             }
         });
 
-
+    // Click2Call server part
     if (restConfig.entryPoint) {
-        // Click 2 Call entrypoint is declared
-        const restHTTPServer = express();
+        const restHTTPServer = express(),
+            originateB24Call = require('app/lib/bitrix/originateB24Call');
 
         restHTTPServer.set('x-powered-by', false);
         restHTTPServer.use(bodyParser.urlencoded({ extended: true }));
@@ -91,7 +89,7 @@ if (bitrixConfig.url) {
         });
 
         restHTTPServer.listen(restConfig.port, () => {
-            log("restHTTPServer service listening on /rest/1/" + restConfig.entryPoint + ":" + restConfig.port);
+            log("Click2Call service listening on /rest/1/" + restConfig.entryPoint + ":" + restConfig.port);
         });
     }
 

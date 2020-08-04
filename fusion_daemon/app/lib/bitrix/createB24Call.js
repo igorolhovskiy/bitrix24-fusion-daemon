@@ -54,7 +54,6 @@ let createB24CallInfo = (callInfo, cache) => {
             }
 
             if (res.statusCode !== 200) {
-                
                 reject("createB24callInfo Server failed to answer with " + res.statusCode + " code");
             }
 
@@ -73,7 +72,6 @@ let createB24CallInfo = (callInfo, cache) => {
             registeredCall = registeredCall.result;
 
             if (!registeredCall['CALL_ID']) {
-                
                 reject("createB24callInfo Call ID is missing in answer");
             }
 
