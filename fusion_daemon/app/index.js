@@ -1,22 +1,17 @@
-const cache = require('memory-cache'),    
-    express = require('express'),
-    bodyParser = require('body-parser'),
-
-    log = require('app/init/logger')(module),
-
-    freeswitch = require('app/init/freeswitch'),
-    checkRequest = require('app/lib/checkRequest'),
-    
-    callRinging = require('app/lib/calls/progress'),
-    callAnswer = require('app/lib/calls/bridge'),
-    callCreate = require('app/lib/calls/create'),
-    callHangup = require('app/lib/calls/hangup'),
-
+const log = require('app/init/logger')(module),
     bitrixConfig = require('app/config/bitrix'),
     restConfig = require('app/config/rest');
-    originateB24Call = require('app/lib/bitrix/originateB24Call');
 
 if (bitrixConfig.url) {
+
+    const freeswitch = require('app/init/freeswitch'),
+        cache = require('memory-cache'),
+
+        checkRequest = require('app/lib/checkRequest'),
+        callRinging = require('app/lib/calls/progress'),
+        callAnswer = require('app/lib/calls/bridge'),
+        callCreate = require('app/lib/calls/create'),
+        callHangup = require('app/lib/calls/hangup');
 
     // FreeSwitch listener part
     freeswitch
@@ -47,7 +42,10 @@ if (bitrixConfig.url) {
 
     // Click2Call server part
     if (restConfig.entryPoint) {
-        const restHTTPServer = express(),
+
+        const express = require('express'),
+            restHTTPServer = express(),
+            bodyParser = require('body-parser'),
             originateB24Call = require('app/lib/bitrix/originateB24Call');
 
         restHTTPServer.set('x-powered-by', false);
