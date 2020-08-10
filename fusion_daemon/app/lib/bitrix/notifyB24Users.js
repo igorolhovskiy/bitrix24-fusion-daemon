@@ -15,7 +15,7 @@ let notifyB24Users = (bitrix24Info, cache, callback) => {
     }
 
     if (!bitrix24Info['message']) {
-        callback("notifyB24Users no message is specified!");
+        callback('notifyB24Users no message is specified!');
         return;
     }
 
@@ -27,10 +27,10 @@ let notifyB24Users = (bitrix24Info, cache, callback) => {
     }
 
     usersWatchingScreen.forEach((user) => {
-        let requestURL = bitrixConfig.url + "/im.notify.json?"
-            + "to=" + user
-            + "&message=" + bitrix24Info['message']
-            + "&type=SYSTEM"
+        let requestURL = bitrixConfig.url + '/im.notify.json?'
+            + 'to=' + user
+            + '&message=' + bitrix24Info['message']
+            + '&type=SYSTEM'
 
         let currentTS = Math.floor(Date.now() / 1000);
 
@@ -38,7 +38,7 @@ let notifyB24Users = (bitrix24Info, cache, callback) => {
             return;
         }
 
-        log("Showing notification: <" + bitrix24Info['message'] + "> to user " + user);
+        log('Showing notification: <' + bitrix24Info['message'] + '> to user ' + user);
         
         cache.put('notify_' + currentTS, requestURL, 2 * 1000); // 2 sec for overlap
 

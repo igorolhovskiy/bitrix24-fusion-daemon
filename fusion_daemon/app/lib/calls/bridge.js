@@ -10,21 +10,21 @@ const log = require('app/init/logger')(module),
 let bridge = (headers, cache) => {
 
     if (typeof(headers['Other-Leg-Destination-Number']) == 'undefined') {
-        log("Other-Leg-Destination-Number is not set!");
+        log('Other-Leg-Destination-Number is not set!');
         log(JSON.stringify(headers, null, 2));
         return;
     }
 
     let dialedUser = headers['variable_callee_id_number'] || headers['Other-Leg-Destination-Number'];
 
-    log("bridge Call was answered by " + dialedUser);
+    log('bridge Call was answered by ' + dialedUser);
 
     getB24EmployeeList(cache)
         .then(res => {
-            let employeeList = res['phone_to_id'];
+            let employeeList = res['phoneToId'];
 
             if (typeof employeeList[dialedUser] === 'undefined') {
-                log("bridge: User with extension " + dialedUser + " not found");
+                log('bridge: User with extension ' + dialedUser + ' not found');
                 return;
             }
     
@@ -42,13 +42,13 @@ let bridge = (headers, cache) => {
                         .then(b24callInfo => {
                             bitrix24Info['b24uuid'] = b24callInfo['uuid'];
     
-                            log("bridge Hiding call screens...");
+                            log('bridge Hiding call screens...');
     
                             if (b24callInfo['type'] === 2) { // Processing screens only for inbound calls
     
                                 hideB24CallScreen(bitrix24Info, cache, (err) => {
                                     if (err) {
-                                        log("bridge" + err);
+                                        log('bridge' + err);
                                     }
                                 });
     
@@ -62,23 +62,23 @@ let bridge = (headers, cache) => {
                                             }, cache)
                                         .then(contactInfo => {
                                             
-                                            bitrix24Info['message'] = "Incoming call from " + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + " <" + legANumber + "> was answered by " + dialedUser;
+                                            bitrix24Info['message'] = 'Incoming call from ' + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + ' <' + legANumber + '> was answered by ' + dialedUser;
 
                                             notifyB24User(bitrix24Info, cache, (err) => {
                                                 if (err) {
-                                                    log("notifyB24User failed with " + err);
+                                                    log('notifyB24User failed with ' + err);
                                                 }
                                             });
                                         })
                                         .catch(err => {
                                             log(err);
 
-                                            let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
-                                            bitrix24Info['message'] = "Incoming call from " + legAName + " <" + legANumber + "> was answered by " + dialedUser;
+                                            let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? '' : headers['variable_caller_id_name'];
+                                            bitrix24Info['message'] = 'Incoming call from ' + legAName + ' <' + legANumber + '> was answered by ' + dialedUser;
 
                                             notifyB24User(bitrix24Info, cache, (err) => {
                                                 if (err) {
-                                                    log("notifyB24User failed with " + err);
+                                                    log('notifyB24User failed with ' + err);
                                                 }
                                             });
                                     });
@@ -86,13 +86,13 @@ let bridge = (headers, cache) => {
                             }
                         }).catch(err => {
                             // If we can't get call UUID - do nothing. Really
-                            log("bridge " + err);
+                            log('bridge ' + err);
                         });
                 })
             }, 500);
         })
         .catch(err => {
-            log("bridge Cannot get employeeList: " + err);
+            log('bridge Cannot get employeeList: ' + err);
         });
 }
 

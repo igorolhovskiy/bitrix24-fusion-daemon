@@ -14,16 +14,16 @@ let checkRequest = (rawHeaders) => {
     }
 
     if (headers['variable_bitrix24_channel'] === 'caller') {
-        log("Processing CALLER channel");
+        log('Processing CALLER channel');
         return headers;
     }
 
     if (headers['variable_bitrix24_channel'] === 'callee') {
-        log("Processing CALLEE channel");
+        log('Processing CALLEE channel');
         return headers;
     }
 
-    log("Processing ZOMBIE channel: " + JSON.stringify(headers, null, 2));
+    log('Processing ZOMBIE channel: ' + JSON.stringify(headers, null, 2));
     return headers;
 }
 

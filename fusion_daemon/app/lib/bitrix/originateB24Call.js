@@ -37,7 +37,7 @@ let originateB24Call = (requestBody, cache, callback) => {
 
     getB24EmployeeList(cache)
         .then(res => {
-            let employeeList = res['id_to_phone'];
+            let employeeList = res['IdToPhone'];
 
             if (!employeeList[userID]) {
                 callback('originateB24Call user ' + userID + ' does not have extension');

@@ -57,37 +57,37 @@ if (bitrixConfig.url) {
                 if (err) {
                     log(err);
                     res.json({
-                        status: "500",
+                        status: '500',
                         message: err
                     });
                     return;
                 }
 
-                log("Originate result: " + data);
+                log('Originate result: ' + data);
                 res.json({
-                    status: "200",
+                    status: '200',
                     message: data
                 });
             });
         });
 
-        restHTTPServer.all("/*", (req, res) => {
+        restHTTPServer.all('/*', (req, res) => {
             res.json({
-                status: "200",
-                message: "PONG"
+                status: '200',
+                message: 'PONG'
             });
         });
 
         restHTTPServer.use(function(err, req, res, next) {
-            log("restHTTPServer Error: " + err);
+            log('restHTTPServer Error: ' + err);
             res.json({
-                status: "500",
+                status: '500',
                 message: err && err.message
             });
         });
 
         restHTTPServer.listen(restConfig.port, () => {
-            log("Click2Call service listening on /rest/1/" + restConfig.entryPoint + ":" + restConfig.port);
+            log('Click2Call service listening on /rest/1/' + restConfig.entryPoint + ':' + restConfig.port);
         });
     }
 

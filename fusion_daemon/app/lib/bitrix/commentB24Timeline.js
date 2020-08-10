@@ -14,25 +14,25 @@ let commentB24Timeline = (contact24Info, cache, callback) => {
         return;
     }
 
-    let requestURL = bitrixConfig.url + "/crm.timeline.comment.add";
+    let requestURL = bitrixConfig.url + '/crm.timeline.comment.add';
 
     let requestOptions = {
-        method: "POST",
+        method: 'POST',
         data:  {
             fields: {
                 ENTITY_ID: contact24Info['contactId'],
-                ENTITY_TYPE: "contact",
+                ENTITY_TYPE: 'contact',
                 COMMENT: contact24Info['message']
                 }
         },
-        contentType: "json",
+        contentType: 'json',
         fixJSONCtlChars: true,
         followRedirect: true,
         gzip: true,
         timeout: [2000, 3000]
     };
 
-    log("Adding timelime message notification: <" + contact24Info['message'] + "> to contact " + contact24Info['contactId']);
+    log('Adding timelime message notification: <' + contact24Info['message'] + '> to contact ' + contact24Info['contactId']);
     
     cache.put('timeline_' + contact24Info['contactId'], contact24Info['message'], 10 * 1000); // 10 seconds to store
 

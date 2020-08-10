@@ -11,12 +11,12 @@ const log = require('app/init/logger')(module),
 let hangup = (headers, cache) => {
 
     if (headers['variable_bitrix24_channel'] === 'callee' && headers['Hangup-Cause'] === 'LOSE_RACE') {
-        log("Not processing hangup for LOSE_RACE callee");
+        log('Not processing hangup for LOSE_RACE callee');
         return;
     }
 
     if (headers['variable_transfer_disposition'] === 'recv_replace') {
-        log("Not processing hangup for transferred calls");
+        log('Not processing hangup for transferred calls');
         return;
     }
 
@@ -36,8 +36,8 @@ let hangup = (headers, cache) => {
                     || headers['variable_sip_invite_failure_status']
                     || headers['variable_last_bridge_proto_specific_hangup_cause'];
 
-                if (headers['Hangup-Cause'] === "LOSE_RACE") {
-                    bitrix24Info['sip_code'] = "487";
+                if (headers['Hangup-Cause'] === 'LOSE_RACE') {
+                    bitrix24Info['sip_code'] = '487';
                 }
 
     
@@ -48,31 +48,31 @@ let hangup = (headers, cache) => {
                     if (headers['variable_sip_hangup_phrase'] === 'OK' 
                             && headers['variable_hangup_cause'] === 'NORMAL_CLEARING' 
                             && headers.hasOwnProperty('variable_rtp_audio_in_raw_bytes')) {
-                        bitrix24Info['sip_code'] = "200";
+                        bitrix24Info['sip_code'] = '200';
                     }
 
                     // AttXfer
                     if (headers['variable_transfer_disposition'] === 'replaced'
                             && headers['variable_hangup_cause'] === 'NORMAL_CLEARING'
                             && headers.hasOwnProperty('variable_rtp_audio_in_raw_bytes')) {
-                        bitrix24Info['sip_code'] = "200";
+                        bitrix24Info['sip_code'] = '200';
                     }
                 }
 
 
                 if (!bitrix24Info['sip_code'] || bitrix24Info['sip_code'] === '') {
-                    log("Cannot get correct hangup code, using 486");
+                    log('Cannot get correct hangup code, using 486');
                     log(JSON.stringify(headers, null, 2));
-                    bitrix24Info['sip_code'] = "486";
+                    bitrix24Info['sip_code'] = '486';
                 }
                 bitrix24Info['sip_code'] = bitrix24Info['sip_code'].replace('sip:', '');
 
                 // Adjust Click2Call hangup code
                 if (headers['variable_click_to_call'] === 'true') {
-                    bitrix24Info['sip_code'] = hangupCauseTable[headers['variable_bridge_hangup_cause']] || "486";
+                    bitrix24Info['sip_code'] = hangupCauseTable[headers['variable_bridge_hangup_cause']] || '486';
 
                 }
-                bitrix24Info['duration'] = headers['variable_billsec'] || "0";
+                bitrix24Info['duration'] = headers['variable_billsec'] || '0';
 
                 let dialedUser = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
 
@@ -90,18 +90,18 @@ let hangup = (headers, cache) => {
 
                 getB24EmployeeList(cache)
                     .then(res => {
-                        let employeeList = res['phone_to_id'];
+                        let employeeList = res['phoneToId'];
                         let requestDelay = 3500;
 
                         // We did get user from request.
                         if (employeeList[dialedUser]) {
-                            log("User with extension " + dialedUser + " found, using userID: " + employeeList[dialedUser]);
+                            log('User with extension ' + dialedUser + ' found, using userID: ' + employeeList[dialedUser]);
                             bitrix24Info['userID'] = employeeList[dialedUser];
                             requestDelay = 500; // If we found user - register it more quick :)
                         }
 
                         if (!bitrix24Info.hasOwnProperty('userID')) {
-                            log("Setting generic userID for this call. Actually, should not happen");
+                            log('Setting generic userID for this call. Actually, should not happen');
                             bitrix24Info['userID'] = bitrixConfig.defaultUserID;
                         }
 
@@ -125,7 +125,7 @@ let hangup = (headers, cache) => {
                                     .then(contactInfo => {
 
                                         let contact24Info = {
-                                            message: "Call was transferred to " + legBNumber,
+                                            message: 'Call was transferred to ' + legBNumber,
                                             contactId: contactInfo['ID']
                                         };
                                         
@@ -146,32 +146,32 @@ let hangup = (headers, cache) => {
                                         }, cache)
                                     .then(contactInfo => {
                                         
-                                        bitrix24Info['message'] = "Call from " + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + " <" + legANumber + "> was missed!";
+                                        bitrix24Info['message'] = 'Call from ' + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + ' <' + legANumber + '> was missed!';
 
                                         notifyB24User(bitrix24Info, cache, (err) => {
                                             if (err) {
-                                                log("notifyB24User failed with " + err);
+                                                log('notifyB24User failed with ' + err);
                                             }
                                         });
                                     })
                                     .catch(err => {
                                         log(err);
 
-                                        let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
-                                        bitrix24Info['message'] = "Call from " + legAName + " <" + legANumber + "> was missed!";
+                                        let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? '' : headers['variable_caller_id_name'];
+                                        bitrix24Info['message'] = 'Call from ' + legAName + ' <' + legANumber + '> was missed!';
 
                                         notifyB24User(bitrix24Info, cache, (err) => {
                                             if (err) {
-                                                log("notifyB24User failed with " + err);
+                                                log('notifyB24User failed with ' + err);
                                             }
                                         });
                                 });
                             }
                         }, requestDelay);
                     })
-                    .catch(err => log("Hangup: " + err));
+                    .catch(err => log('Hangup: ' + err));
             })
-            .catch(err => log("Hangup: " + err));
+            .catch(err => log('Hangup: ' + err));
     });
 }
 

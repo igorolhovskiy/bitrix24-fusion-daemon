@@ -8,7 +8,7 @@ let getB24ContactInfo = (callInfo, cache) => {
 
     if (!callInfo['callerid'] || !callInfo['calleeid']) {
         return new Promise((resolve, reject) => {
-            reject("No CallerID and CalleeID provided");
+            reject('No CallerID and CalleeID provided');
         });
     }
 
@@ -17,34 +17,34 @@ let getB24ContactInfo = (callInfo, cache) => {
 
     if (contactPhoneNum.length <= fusionConfig.localNumberLength) {
         return new Promise((resolve, reject) => {
-            reject("getB24ContactInfo is local. Not processing");
+            reject('getB24ContactInfo is local. Not processing');
         });
     }
 
         
     let b24Contact = cache.get('contact_' + contactPhoneNum);
     if (b24Contact) {
-        log("Contact exists in cache, returning...");
+        log('Contact exists in cache, returning...');
         return b24Contact;
     }
 
     let bitrix24ContactInfo = new Promise((resolve, reject) => {
 
 
-        let requestURL = bitrixConfig.url + "/crm.contact.list.json";
+        let requestURL = bitrixConfig.url + '/crm.contact.list.json';
         let requestOptions = {
-            method: "POST",
+            method: 'POST',
             data: {
                 filter: {
                     PHONE: contactPhoneNum
                 },
                 order: { 
-                    DATE_MODIFY: "DESC"
+                    DATE_MODIFY: 'DESC'
                 },
-                select: ["NAME", "LAST_NAME", "TYPE_ID"]
+                select: ['NAME', 'LAST_NAME', 'TYPE_ID', 'ASSIGNED_BY_ID']
             },
-            contentType: "json",
-            dataType: "json",
+            contentType: 'json',
+            dataType: 'json',
             fixJSONCtlChars: true,
             followRedirect: true,
             gzip: true,
@@ -59,7 +59,7 @@ let getB24ContactInfo = (callInfo, cache) => {
             }
 
             if (res.statusCode !== 200) {
-                reject("getB24ContactInfo Server failed to answer with " + res.statusCode + " code");
+                reject('getB24ContactInfo Server failed to answer with ' + res.statusCode + ' code');
             }
 
             if (data['total'] === 0 || !data['result'][0]) {

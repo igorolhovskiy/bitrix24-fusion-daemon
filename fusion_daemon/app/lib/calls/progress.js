@@ -13,10 +13,10 @@ let progress = (headers, cache) => {
 
     getB24EmployeeList(cache)
         .then(res => {
-            let employeeList = res['phone_to_id'];
+            let employeeList = res['phoneToId'];
 
             if (typeof employeeList[dialedUser] === 'undefined') {
-                log("User with extension " + dialedUser + " not found");
+                log('User with extension ' + dialedUser + ' not found');
                 return;
             }
 
@@ -32,14 +32,14 @@ let progress = (headers, cache) => {
                 getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
                     legInfo
                         .then(b24callInfo => {
-                            if (b24callInfo['type'] === 2) { // Show popup only for incoming calls
+                            if (b24callInfo['type'] === 2) { // Show popups and notifications only for incoming calls
 
-                                log("Showing screen to " + dialedUser + "/" + employeeList[dialedUser]);
+                                log('Showing screen to ' + dialedUser + '/' + employeeList[dialedUser]);
 
                                 bitrix24Info['b24uuid'] = b24callInfo['uuid'];
                                 showB24CallScreen(bitrix24Info, cache, (err) => {
                                     if (err) {
-                                        log("showB24CallScreen failed with " + err);
+                                        log('showB24CallScreen failed with ' + err);
                                     }
                                 });
 
@@ -53,23 +53,23 @@ let progress = (headers, cache) => {
                                             }, cache)
                                         .then(contactInfo => {
                                             
-                                            bitrix24Info['message'] = "Incoming call from " + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + " <" + legANumber + ">";
+                                            bitrix24Info['message'] = 'Incoming call from ' + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + ' <' + legANumber + '>';
 
                                             notifyB24User(bitrix24Info, cache, (err) => {
                                                 if (err) {
-                                                    log("notifyB24User failed with " + err);
+                                                    log('notifyB24User failed with ' + err);
                                                 }
                                             });
                                         })
                                         .catch(err => {
                                             log(err);
 
-                                            let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? "" : headers['variable_caller_id_name'];
-                                            bitrix24Info['message'] = "Incoming call from " + legAName + " <" + legANumber + ">";
+                                            let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? '' : headers['variable_caller_id_name'];
+                                            bitrix24Info['message'] = 'Incoming call from ' + legAName + ' <' + legANumber + '>';
 
                                             notifyB24User(bitrix24Info, cache, (err) => {
                                                 if (err) {
-                                                    log("notifyB24User failed with " + err);
+                                                    log('notifyB24User failed with ' + err);
                                                 }
                                             });
                                     });
@@ -77,13 +77,13 @@ let progress = (headers, cache) => {
                             }
                         }).catch(err => {
                             // If we can't get call UUID - do nothing. Really
-                            log("getB24CallInfo failed with " + err);
+                            log('getB24CallInfo failed with ' + err);
                         });
                 });  
             }, 500);
         })
         .catch(err => {
-            log("Cannot get employeeList: " + err);
+            log('Cannot get employeeList: ' + err);
         });
 }
 

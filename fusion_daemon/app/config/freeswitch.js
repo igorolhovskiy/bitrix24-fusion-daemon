@@ -7,19 +7,19 @@ module.exports = {
     subscription: ['CHANNEL_CREATE', 'CHANNEL_PROGRESS' ,'CHANNEL_BRIDGE', 'CHANNEL_HANGUP_COMPLETE', 'CUSTOM'],
     //subscription: ['ALL'],
     hangupCause: {
-        "UNALLOCATED_NUMBER": "404",
-        "USER_BUSY": "486",
-        "NO_USER_RESPONSE": "408",
-        "NO_ANSWER": "480",
-        "SUBSCRIBER_ABSENT": "480",
-        "CALL_REJECTED": "603",
-        "DESTINATION_OUT_OF_ORDER": "502",
-        "INVALID_NUMBER_FORMAT": "484",
-        "NORMAL_TEMPORARY_FAILURE": "503",
-        "SWITCH_CONGESTION": "503",
-        "INCOMPATIBLE_DESTINATION": "488",
-        "RECOVERY_ON_TIMER_EXPIRE": "504",
-        "ORIGINATOR_CANCEL": "487",
-        "NORMAL_CLEARING": "200"
+        'UNALLOCATED_NUMBER': '404',
+        'USER_BUSY': '486',
+        'NO_USER_RESPONSE': '408',
+        'NO_ANSWER': '480',
+        'SUBSCRIBER_ABSENT': '480',
+        'CALL_REJECTED': '603',
+        'DESTINATION_OUT_OF_ORDER': '502',
+        'INVALID_NUMBER_FORMAT': '484',
+        'NORMAL_TEMPORARY_FAILURE': '503',
+        'SWITCH_CONGESTION': '503',
+        'INCOMPATIBLE_DESTINATION': '488',
+        'RECOVERY_ON_TIMER_EXPIRE': '504',
+        'ORIGINATOR_CANCEL': '487',
+        'NORMAL_CLEARING': '200'
     }
 };

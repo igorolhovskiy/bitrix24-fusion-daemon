@@ -23,9 +23,9 @@ let hideCallScreen = (bitrix24Info, cache, callback) => {
     usersWatchingScreen.forEach((user) => {
         if (user !== bitrix24Info['userID']) {
 
-            let requestURL = bitrixConfig.url + "/telephony.externalcall.hide?"
-                + "USER_ID=" + user
-                + "&CALL_ID=" + bitrix24Info['b24uuid'];
+            let requestURL = bitrixConfig.url + '/telephony.externalcall.hide?'
+                + 'USER_ID=' + user
+                + '&CALL_ID=' + bitrix24Info['b24uuid'];
             
             request.request(requestURL, (err) => {
                 if (err) {
