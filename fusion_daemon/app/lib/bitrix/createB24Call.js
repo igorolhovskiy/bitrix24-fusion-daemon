@@ -28,8 +28,8 @@ let createB24CallInfo = (callInfo, cache) => {
         }
 
         let crmCreate = bitrixConfig.createContact ? "1" : "0";
-        
-        if (bitrixConfig.createLocalContact === false) {
+
+        if (bitrixConfig.createContact && !bitrixConfig.createLocalContact) {
             // Check if call is local.
             if (    callInfo['callerid']
                     && callInfo['calleeid']
