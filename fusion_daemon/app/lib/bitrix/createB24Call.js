@@ -27,7 +27,8 @@ let createB24CallInfo = (callInfo, cache) => {
             reject('createB24callInfo No callerID provided!');
         }
 
-        let crmCreate = '1';
+        let crmCreate = bitrixConfig.createContact ? "1" : "0";
+        
         if (bitrixConfig.createLocalContact === false) {
             // Check if call is local.
             if (    callInfo['callerid']
