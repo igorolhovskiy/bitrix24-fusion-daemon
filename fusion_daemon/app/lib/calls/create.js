@@ -103,8 +103,9 @@ let create = (headers, cache) => {
 
                                 let responsibleUserId = contactInfo['ASSIGNED_BY_ID'];
                                 let idToManagerId = getB24EmployeeListResult['IdToManager'];
+                                let calledExtension = getB24EmployeeListResult['IdToPhone'][responsibleUserId] || "";
 
-                                log('DID ' + didCalled + ' is not accosiated with dialed user ' + responsibleUserId + ' but ' + didUserID);
+                                log('DID ' + didCalled + ' is not accosiated with dialed user ' + calledExtension + ' (' + responsibleUserId + ') but ' + didUserID);
 
                                 if (idToManagerId[responsibleUserId]) {
                                     let responsibleManagersID = idToManagerId[responsibleUserId];
@@ -112,7 +113,7 @@ let create = (headers, cache) => {
                                     for (let responsibleManagerID of responsibleManagersID) {
                                         let contact24Info = {
                                             contactId: responsibleManagerID,
-                                            message: 'Call to DID ' + didCalled + ' is not accosiated with dialed user ' + responsibleUserId + ' but ' + didUserID
+                                            message: 'Call to DID ' + didCalled + ' is not accosiated with dialed user ' + calledExtension + ' (' + responsibleUserId + ') but ' + didUserID
                                         }
                                         commentB24Timeline(contact24Info, cache, (err, res) => {
                                             if (err) {
