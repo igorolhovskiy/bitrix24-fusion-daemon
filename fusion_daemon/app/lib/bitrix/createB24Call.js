@@ -48,6 +48,8 @@ let createB24CallInfo = (callInfo, cache) => {
             + '&CRM_CREATE=' + crmCreate
             + '&SHOW=0';
 
+        log(requestURL);
+
         request.request(requestURL, (err, data, res) => {
 
             if (err) {
