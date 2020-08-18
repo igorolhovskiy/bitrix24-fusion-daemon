@@ -13,8 +13,8 @@ let originateB24Call = (requestBody, cache, callback) => {
     }
 
     if (requestBody.auth.domain !== restConfig.requestDomain) {
-        callback('originateB24Call Domain ' + requestBody.auth.domain + ' is not authorized');
-        return;
+        log('originateB24Call Domain ' + requestBody.auth.domain + ' is not authorized');
+    //    return;
     }
 
     if (requestBody.auth.application_token !== restConfig.token) {

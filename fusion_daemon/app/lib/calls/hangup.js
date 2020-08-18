@@ -31,8 +31,8 @@ let hangup = (headers, cache) => {
                 bitrix24Info['b24uuid'] = b24callInfo['uuid'];
                 bitrix24Info['userID'] = b24callInfo['userID'];
 
-                bitrix24Info['sip_code'] = headers['variable_sip_term_status'] 
-                    || headers['variable_proto_specific_hangup_cause'] 
+                bitrix24Info['sip_code'] = headers['variable_sip_term_status']
+                    || headers['variable_proto_specific_hangup_cause']
                     || headers['variable_sip_invite_failure_status']
                     || headers['variable_last_bridge_proto_specific_hangup_cause'];
 
@@ -40,13 +40,13 @@ let hangup = (headers, cache) => {
                     bitrix24Info['sip_code'] = '487';
                 }
 
-    
-                if (!bitrix24Info['sip_code'] 
+
+                if (!bitrix24Info['sip_code']
                     || bitrix24Info['sip_code'] === '') {
 
                     // Call is answered.
-                    if (headers['variable_sip_hangup_phrase'] === 'OK' 
-                            && headers['variable_hangup_cause'] === 'NORMAL_CLEARING' 
+                    if (headers['variable_sip_hangup_phrase'] === 'OK'
+                            && headers['variable_hangup_cause'] === 'NORMAL_CLEARING'
                             && headers.hasOwnProperty('variable_rtp_audio_in_raw_bytes')) {
                         bitrix24Info['sip_code'] = '200';
                     }
@@ -77,12 +77,12 @@ let hangup = (headers, cache) => {
                 let dialedUser = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
 
                 if (b24callInfo['type'] === 2)  {// Get user for inbound call
-                    dialedUser = headers['Caller-Callee-ID-Number'] 
-                        || headers['variable_dialed_extension'] 
+                    dialedUser = headers['Caller-Callee-ID-Number']
+                        || headers['variable_dialed_extension']
                         || headers['variable_dialed_user'];
                 }
 
-                if (headers['variable_record_path'] && headers['variable_record_name']) {
+                if (headers['variable_record_path'] && headers['variable_record_name'] && bitrix24Info['sip_code'] === '200') {
                     // We have a record
                     bitrix24Info['rec_path'] = headers['variable_record_path'];
                     bitrix24Info['rec_file'] = headers['variable_record_name'];
@@ -108,14 +108,14 @@ let hangup = (headers, cache) => {
                         setTimeout(() => {
                             finishB24Call(bitrix24Info, cache);
 
-                            let legANumber = headers['Caller-Orig-Caller-ID-Number'] 
+                            let legANumber = headers['Caller-Orig-Caller-ID-Number']
                                     || headers['Caller-Caller-ID-Number'];
 
                             // Transferred calls situation
                             if (bitrixConfig.showIMNotification && headers['Caller-Transfer-Source']) {
 
                                 let legBNumber = headers['variable_last_sent_callee_id_number']
-                                    || headers['Caller-Callee-ID-Number'] 
+                                    || headers['Caller-Callee-ID-Number']
                                     || headers['Other-Leg-Callee-ID-Number'];
 
                                 getB24ContactInfo({
@@ -128,7 +128,7 @@ let hangup = (headers, cache) => {
                                             message: 'Call was transferred to ' + legBNumber,
                                             contactId: contactInfo['ID']
                                         };
-                                        
+
                                         commentB24Timeline(contact24Info, cache, (err) => {
                                             if (err) {
                                                 log(err);
@@ -145,7 +145,7 @@ let hangup = (headers, cache) => {
                                             calleeid: dialedUser
                                         }, cache)
                                     .then(contactInfo => {
-                                        
+
                                         bitrix24Info['message'] = 'Call from ' + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + ' <' + legANumber + '> was missed!';
 
                                         notifyB24User(bitrix24Info, cache, (err) => {
