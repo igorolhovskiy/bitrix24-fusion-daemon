@@ -58,8 +58,8 @@ let createB24CallInfo = (callInfo, cache) => {
                 reject('createB24callInfo Server failed to answer with ' + res.statusCode + ' code');
             }
 
-            if (!data.hasOwnProperty('toString') || typeof data === 'undefined') {
-                reject('createB24callInfo data in answer is missing');
+            if (!Buffer.isBuffer(data)) {
+                reject('createB24callInfo data is not Buffer!');
             }
 
             let registeredCall = data.toString();
