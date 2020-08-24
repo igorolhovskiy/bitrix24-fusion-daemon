@@ -67,7 +67,7 @@ let createB24CallInfo = (callInfo, cache) => {
             try {
                 registeredCall = JSON.parse(registeredCall);
             } catch (e) {
-                rtoString
+                reject(e);
             }
 
             if (typeof registeredCall.result === 'undefined') {
@@ -76,7 +76,7 @@ let createB24CallInfo = (callInfo, cache) => {
 
             registeredCall = registeredCall.result;
 
-            if (!registeredCall['CALL_ID']) {
+            if (typeof registeredCall === 'undefined' || !registeredCall['CALL_ID']) {
                 reject('createB24callInfo Call ID is missing in answer');
             }
 
