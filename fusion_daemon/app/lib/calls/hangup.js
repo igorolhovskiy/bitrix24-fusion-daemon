@@ -57,6 +57,12 @@ let hangup = (headers, cache) => {
                             && headers.hasOwnProperty('variable_rtp_audio_in_raw_bytes')) {
                         bitrix24Info['sip_code'] = '200';
                     }
+
+                    // No Answer
+                    if (headers['variable_DIALSTATUS'] === 'NOANSWER'
+                            && headers['variable_originate_disposition'] === 'NO_ANSWER') {
+                        bitrix24Info['sip_code'] = '486';
+                    }
                 }
 
 
