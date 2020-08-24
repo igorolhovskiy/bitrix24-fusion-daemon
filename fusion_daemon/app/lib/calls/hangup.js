@@ -61,7 +61,7 @@ let hangup = (headers, cache) => {
                     // No Answer
                     if (headers['variable_DIALSTATUS'] === 'NOANSWER'
                             && headers['variable_originate_disposition'] === 'NO_ANSWER') {
-                        bitrix24Info['sip_code'] = '486';
+                        bitrix24Info['sip_code'] = '480';
                     }
                 }
 
