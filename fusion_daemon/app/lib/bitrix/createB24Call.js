@@ -35,7 +35,7 @@ let createB24CallInfo = (callInfo, cache) => {
                     && callInfo['calleeid']
                     && callInfo['callerid'].length <= fusionConfig.localNumberLength
                     && callInfo['calleeid'].length <= fusionConfig.localNumberLength) {
-                
+
                 crmCreate = '0';
                 log('Not creating CRM entity as call ' + callInfo['callerid'] + ' -> ' + callInfo['calleeid'] + ' considered local');
             }
@@ -58,12 +58,16 @@ let createB24CallInfo = (callInfo, cache) => {
                 reject('createB24callInfo Server failed to answer with ' + res.statusCode + ' code');
             }
 
+            if (!data.hasOwnProperty('toString') || typeof data === 'undefined') {
+                reject('createB24callInfo data in answer is missing');
+            }
+
             let registeredCall = data.toString();
 
             try {
                 registeredCall = JSON.parse(registeredCall);
             } catch (e) {
-                reject('createB24callInfo Answer from server is not JSON');
+                rtoString
             }
 
             if (typeof registeredCall.result === 'undefined') {
