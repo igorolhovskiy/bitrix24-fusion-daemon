@@ -76,7 +76,7 @@ let createB24CallInfo = (callInfo, cache) => {
 
             registeredCall = registeredCall.result;
 
-            if (typeof registeredCall === 'undefined' || !registeredCall['CALL_ID']) {
+            if (typeof registeredCall === 'undefined' || !registeredCall.hasOwnProperty('CALL_ID')) {
                 reject('createB24callInfo Call ID is missing in answer');
             }
 
