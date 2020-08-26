@@ -70,18 +70,18 @@ let createB24CallInfo = (callInfo, cache) => {
                 reject(e);
             }
 
-            if (registeredCall === undefined) {
+            if (!registeredCall || !registeredCall.hasOwnProperty('result')) {
                 reject('createB24callInfo Missing result section in answer');
             }
 
-            let registeredCallInfo = registeredCall.result;
+            registeredCall = registeredCall.result;
 
-            if (!registeredCallInfo || registeredCallInfo.hasOwnProperty('CALL_ID') == false) {
+            if (!registeredCall.hasOwnProperty('CALL_ID')) {
                 reject('createB24callInfo Call ID is missing in answer');
             }
 
             resolve({
-                uuid: registeredCallInfo['CALL_ID'],
+                uuid: registeredCall['CALL_ID'],
                 type: callInfo['type'],
                 userID: callInfo['userID'],
                 phone: callInfo['callerid']
