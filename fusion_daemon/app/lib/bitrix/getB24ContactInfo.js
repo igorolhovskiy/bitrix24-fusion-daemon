@@ -56,14 +56,17 @@ let getB24ContactInfo = (callInfo, cache) => {
 
             if (err) {
                 reject(err);
+                return;
             }
 
             if (res.statusCode !== 200) {
                 reject('getB24ContactInfo Server failed to answer with ' + res.statusCode + ' code');
+                return;
             }
 
             if (data['total'] === 0 || !data['result'][0]) {
                 reject('getB24ContactInfo No info on number ' + contactPhoneNum);
+                return;
             }
 
             // Taking first appearance

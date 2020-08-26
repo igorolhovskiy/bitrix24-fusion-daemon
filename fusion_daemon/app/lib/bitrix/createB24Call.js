@@ -9,6 +9,7 @@ let createB24CallInfo = (callInfo, cache) => {
     if (!callInfo['callUuid']) {
         return new Promise((resolve, reject) => {
             reject('createB24callInfo No UUID provided!');
+            return;
         });
     }
 
@@ -21,10 +22,12 @@ let createB24CallInfo = (callInfo, cache) => {
     let bitrix24Callnfo = new Promise((resolve, reject) => {
         if (!callInfo['userID']) {
             reject('createB24callInfo No UserID provided!');
+            return;
         }
 
         if (!callInfo['callerid']) {
             reject('createB24callInfo No callerID provided!');
+            return;
         }
 
         let crmCreate = bitrixConfig.createContact ? "1" : "0";
@@ -52,14 +55,17 @@ let createB24CallInfo = (callInfo, cache) => {
 
             if (err) {
                 reject(err);
+                return;
             }
 
             if (res.statusCode !== 200) {
                 reject('createB24callInfo Server failed to answer with ' + res.statusCode + ' code');
+                return;
             }
 
             if (!Buffer.isBuffer(data)) {
                 reject('createB24callInfo data is not Buffer!');
+                return;
             }
 
             let registeredCall = data.toString();
@@ -68,16 +74,19 @@ let createB24CallInfo = (callInfo, cache) => {
                 registeredCall = JSON.parse(registeredCall);
             } catch (e) {
                 reject(e);
+                return;
             }
 
             if (!registeredCall || !registeredCall.hasOwnProperty('result')) {
                 reject('createB24callInfo Missing result section in answer');
+                return;
             }
 
             registeredCall = registeredCall.result;
 
             if (!registeredCall.hasOwnProperty('CALL_ID')) {
                 reject('createB24callInfo Call ID is missing in answer');
+                return;
             }
 
             resolve({

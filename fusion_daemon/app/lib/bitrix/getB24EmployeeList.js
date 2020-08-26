@@ -31,14 +31,17 @@ function getB24EmployeeList(cache) {
 
             if (err) {
                 reject(err);
+                return;
             }
 
             if (res.statusCode !== 200) {
                 reject('getB24EmployeeList Server failed to answer with ' + res.statusCode + ' code');
+                return;
             }
 
             if (!Buffer.isBuffer(data)) {
                 reject('getB24EmployeeList data is not Buffer!');
+                return;
             }
 
             let userList = data.toString();
@@ -47,10 +50,12 @@ function getB24EmployeeList(cache) {
                 userList = JSON.parse(userList);
             } catch (e) {
                 reject('getB24EmployeeList Answer from server is not JSON');
+                return;
             }
 
             if (userList.result === undefined) {
                 reject('getB24EmployeeList Missing result section in answer');
+                return;
             }
 
             userList = userList.result;
