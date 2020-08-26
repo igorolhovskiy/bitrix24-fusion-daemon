@@ -12,7 +12,7 @@ let getB24ContactInfo = (callInfo, cache) => {
         });
     }
 
-    // Get first callerID/calleeID with length > local 
+    // Get first callerID/calleeID with length > local
     let contactPhoneNum =  callInfo['callerid'].length > fusionConfig.localNumberLength ? callInfo['callerid'] : callInfo['calleeid'];
 
     if (contactPhoneNum.length <= fusionConfig.localNumberLength) {
@@ -21,7 +21,7 @@ let getB24ContactInfo = (callInfo, cache) => {
         });
     }
 
-        
+
     let b24Contact = cache.get('contact_' + contactPhoneNum);
     if (b24Contact) {
         log('Contact exists in cache, returning...');
@@ -38,7 +38,7 @@ let getB24ContactInfo = (callInfo, cache) => {
                 filter: {
                     PHONE: contactPhoneNum
                 },
-                order: { 
+                order: {
                     DATE_MODIFY: 'DESC'
                 },
                 select: ['NAME', 'LAST_NAME', 'TYPE_ID', 'ASSIGNED_BY_ID']
@@ -63,7 +63,7 @@ let getB24ContactInfo = (callInfo, cache) => {
             }
 
             if (data['total'] === 0 || !data['result'][0]) {
-                reject('getB24ContactInfo No info on this number');
+                reject('getB24ContactInfo No info on number ' + contactPhoneNum);
             }
 
             // Taking first appearance
