@@ -1,21 +1,21 @@
 const log = require('app/init/logger')(module),
     bitrixConfig = require('app/config/bitrix'),
     request = require('urllib');
-    
+
 // Returning format - Promise
 // [{extension_1: userid_1}, {extension_2: userid_2}, ... , {extension_n: userid_n}]
 //
 
 function getB24EmployeeList(cache) {
 
-    if (typeof cache === 'undefined') {
+    if (cache === undefined) {
         return new Promise((resolve, reject) => {
             reject('getB24EmployeeList: Cache is undefined!');
         });
     }
 
     let employeeList = cache.get('employeeList');
-    
+
     if (employeeList) {
         return employeeList;
     }
@@ -45,7 +45,7 @@ function getB24EmployeeList(cache) {
                 reject('getB24EmployeeList Answer from server is not JSON');
             }
 
-            if (typeof userList.result === 'undefined') {
+            if (userList.result === undefined) {
                 reject('getB24EmployeeList Missing result section in answer');
             }
 
@@ -61,7 +61,7 @@ function getB24EmployeeList(cache) {
             let managerToDepartment = {};
 
             for (let user in userList) {
-                if (typeof userList[user].ID === 'undefined') {
+                if (userList[user].ID === undefined) {
                     log('Strange, we have a user without ID: ' + JSON.stringify(user));
                     continue;
                 }
@@ -71,7 +71,7 @@ function getB24EmployeeList(cache) {
                     continue;
                 }
 
-                if (typeof userList[user].UF_PHONE_INNER === 'undefined' || userList[user].UF_PHONE_INNER === null) {
+                if (userList[user].UF_PHONE_INNER === undefined || userList[user].UF_PHONE_INNER === null) {
                     continue;
                 }
 
@@ -141,7 +141,7 @@ function getB24EmployeeList(cache) {
             }
 
             //log('userToManager -> ' + JSON.stringify(userToManager));
-            
+
             employeeListResult['IdToManager'] = userToManager;
 
             //log('employeeListResult -> ' + JSON.stringify(employeeListResult));
@@ -153,6 +153,6 @@ function getB24EmployeeList(cache) {
     cache.put('employeeList', employeeList, 10 * 60 * 1000); // Store for 10 min
 
     return employeeList;
-}   
+}
 
 module.exports = getB24EmployeeList;

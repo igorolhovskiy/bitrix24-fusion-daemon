@@ -70,13 +70,13 @@ let createB24CallInfo = (callInfo, cache) => {
                 reject(e);
             }
 
-            if (typeof registeredCall.result === 'undefined') {
+            if (registeredCall === undefined) {
                 reject('createB24callInfo Missing result section in answer');
             }
 
             registeredCall = registeredCall.result;
 
-            if (typeof registeredCall === 'undefined' || !registeredCall.hasOwnProperty('CALL_ID')) {
+            if (registeredCall === undefined || !registeredCall.hasOwnProperty('CALL_ID')) {
                 reject('createB24callInfo Call ID is missing in answer');
             }
 

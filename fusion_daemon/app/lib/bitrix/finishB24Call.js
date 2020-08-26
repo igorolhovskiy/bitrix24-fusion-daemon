@@ -57,7 +57,7 @@ let finishB24Call = (callInfo, cache) => {
             return;
         }
 
-        if (typeof finishCall.result === 'undefined') {
+        if (finishCall.result === undefined || !finishCall.result.hasOwnProperty('CALL_ID')) {
             log('Missing result section in answer');
             return;
         }

@@ -9,7 +9,7 @@ const log = require('app/init/logger')(module),
 
 let bridge = (headers, cache) => {
 
-    if (typeof(headers['Other-Leg-Destination-Number']) == 'undefined') {
+    if (!headers.hasOwnProperty('Other-Leg-Destination-Number')) {
         log('Other-Leg-Destination-Number is not set!');
         log(JSON.stringify(headers, null, 2));
         return;
@@ -23,45 +23,45 @@ let bridge = (headers, cache) => {
         .then(res => {
             let employeeList = res['phoneToId'];
 
-            if (typeof employeeList[dialedUser] === 'undefined') {
+            if (employeeList[dialedUser] === undefined) {
                 log('bridge: User with extension ' + dialedUser + ' not found');
                 return;
             }
-    
+
             let bitrix24Info = {
                 userID: employeeList[dialedUser],
                 callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
             }
 
             updateB24CallInfo(bitrix24Info, cache);
-            
+
             // Call function 500 ms after to make sure cache is populated
             setTimeout(() => {
                 getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
                     legInfo
                         .then(b24callInfo => {
                             bitrix24Info['b24uuid'] = b24callInfo['uuid'];
-    
+
                             log('bridge Hiding call screens...');
-    
+
                             if (b24callInfo['type'] === 2) { // Processing screens only for inbound calls
-    
+
                                 hideB24CallScreen(bitrix24Info, cache, (err) => {
                                     if (err) {
                                         log('bridge' + err);
                                     }
                                 });
-    
+
                                 if (bitrixConfig.showIMNotification) {
 
                                     let legANumber = headers['Caller-Orig-Caller-ID-Number'] || headers['Caller-Caller-ID-Number'];
-                         
+
                                     getB24ContactInfo({
                                             callerid: legANumber,
                                             calleeid: dialedUser
                                             }, cache)
                                         .then(contactInfo => {
-                                            
+
                                             bitrix24Info['message'] = 'Incoming call from ' + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + ' <' + legANumber + '> was answered by ' + dialedUser;
 
                                             notifyB24User(bitrix24Info, cache, (err) => {
@@ -73,7 +73,7 @@ let bridge = (headers, cache) => {
                                         .catch(err => {
                                             log(err);
 
-                                            let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? '' : headers['variable_caller_id_name'];
+                                            let legAName = headers.hasOwnProperty('variable_caller_id_name') ?  headers['variable_caller_id_name'] : '';
                                             bitrix24Info['message'] = 'Incoming call from ' + legAName + ' <' + legANumber + '> was answered by ' + dialedUser;
 
                                             notifyB24User(bitrix24Info, cache, (err) => {

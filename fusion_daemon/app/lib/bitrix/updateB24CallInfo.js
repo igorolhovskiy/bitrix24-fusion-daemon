@@ -6,7 +6,7 @@ let updateB24CallInfo = (callInfo, cache) => {
 
     //log('Getting info for ' + callInfo['callUuid']);
 
-    if (typeof callInfo['callUuid'] === 'undefined') {
+    if (callInfo === undefined || !callInfo.hasOwnProperty('callUuid')) {
         log('callUuid is not provided!');
         return;
     }

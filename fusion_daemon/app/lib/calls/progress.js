@@ -15,7 +15,7 @@ let progress = (headers, cache) => {
         .then(res => {
             let employeeList = res['phoneToId'];
 
-            if (typeof employeeList[dialedUser] === 'undefined') {
+            if (employeeList[dialedUser] === undefined) {
                 log('User with extension ' + dialedUser + ' not found');
                 return;
             }
@@ -52,7 +52,7 @@ let progress = (headers, cache) => {
                                             calleeid: dialedUser
                                             }, cache)
                                         .then(contactInfo => {
-                                            
+
                                             bitrix24Info['message'] = 'Incoming call from ' + contactInfo['NAME'] + ' ' + contactInfo['LAST_NAME'] + ' <' + legANumber + '>';
 
                                             notifyB24User(bitrix24Info, cache, (err) => {
@@ -64,7 +64,7 @@ let progress = (headers, cache) => {
                                         .catch(err => {
                                             log(err);
 
-                                            let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? '' : headers['variable_caller_id_name'];
+                                            let legAName = headers.hasOwnProperty('variable_caller_id_name') ? headers['variable_caller_id_name'] : '';
                                             bitrix24Info['message'] = 'Incoming call from ' + legAName + ' <' + legANumber + '>';
 
                                             notifyB24User(bitrix24Info, cache, (err) => {
@@ -79,7 +79,7 @@ let progress = (headers, cache) => {
                             // If we can't get call UUID - do nothing. Really
                             log('getB24CallInfo failed with ' + err);
                         });
-                });  
+                });
             }, 500);
         })
         .catch(err => {

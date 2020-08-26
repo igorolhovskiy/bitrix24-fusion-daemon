@@ -3,7 +3,7 @@ const log = require('app/init/logger')(module);
 
 let getB24CallInfo = (callInfo, cache) => {
 
-    if (typeof callInfo['callUuid'] === 'undefined') {
+    if (callInfo === undefined || !callInfo.hasOwnProperty('callUuid')) {
         return new Promise((resolve, reject) => {
             reject('getB24CallInfo No Call UUID provided!');
         });

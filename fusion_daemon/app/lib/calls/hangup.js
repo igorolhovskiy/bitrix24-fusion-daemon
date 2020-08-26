@@ -163,7 +163,7 @@ let hangup = (headers, cache) => {
                                     .catch(err => {
                                         log(err);
 
-                                        let legAName = typeof headers['variable_caller_id_name'] === 'undefined' ? '' : headers['variable_caller_id_name'];
+                                        let legAName = headers.hasOwnProperty('variable_caller_id_name') ? headers['variable_caller_id_name'] : '';
                                         bitrix24Info['message'] = 'Call from ' + legAName + ' <' + legANumber + '> was missed!';
 
                                         notifyB24User(bitrix24Info, cache, (err) => {
