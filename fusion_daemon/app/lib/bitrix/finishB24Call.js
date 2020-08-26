@@ -43,8 +43,7 @@ let finishB24Call = (callInfo, cache) => {
         }
 
         if (res.statusCode !== 200) {
-            log('Server failed to answer with ' + res.statusCode + ' code');
-            log(requestURL + ' -> ' + data.toString());
+            log('URL ' + requestURL + ' failed with ' + res.statusCode + ' code');
             return;
         }
 

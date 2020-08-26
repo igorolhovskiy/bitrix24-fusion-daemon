@@ -37,6 +37,10 @@ function getB24EmployeeList(cache) {
                 reject('getB24EmployeeList Server failed to answer with ' + res.statusCode + ' code');
             }
 
+            if (!Buffer.isBuffer(data)) {
+                reject('getB24EmployeeList data is not Buffer!');
+            }
+
             let userList = data.toString();
 
             try {
