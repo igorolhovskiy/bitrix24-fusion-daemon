@@ -30,6 +30,8 @@ let hangup = (headers, cache) => {
 
                 bitrix24Info['b24uuid'] = b24callInfo['uuid'];
                 bitrix24Info['userID'] = b24callInfo['userID'];
+                bitrix24Info['type'] = b24callInfo['type'];
+                bitrix24Info['callerid'] = b24callInfo['phone'];
 
                 bitrix24Info['sip_code'] = headers['variable_sip_term_status']
                     || headers['variable_proto_specific_hangup_cause']
@@ -128,8 +130,8 @@ let hangup = (headers, cache) => {
                             }
                             // Select non-default user if possible
                             if (bitrix24InfoCached['userID']) {
-                                log('Updating hangup data of ' + bitrix24Info['b24uuid'] + " with userID");
                                 bitrix24Info['userID'] = (bitrix24InfoCached['userID'] == bitrixConfig.defaultUserID) ? bitrix24Info['userID'] : bitrix24InfoCached['userID'];
+                                log('Updating hangup data of ' + bitrix24Info['b24uuid'] + " with userID " +  bitrix24Info['userID']);
                             }
                         }
                         cache.put('hangup_data_' + bitrix24Info['b24uuid'], bitrix24Info, 3500);

@@ -17,14 +17,14 @@ let bridge = (headers, cache) => {
 
     let dialedUser = headers['variable_callee_id_number'] || headers['Other-Leg-Destination-Number'];
 
-    log('bridge Call was answered by ' + dialedUser);
+    log('Call was answered by ' + dialedUser);
 
     getB24EmployeeList(cache)
         .then(res => {
             let employeeList = res['phoneToId'];
 
             if (employeeList[dialedUser] === undefined) {
-                log('bridge: User with extension ' + dialedUser + ' not found');
+                log('User with extension ' + dialedUser + ' not found');
                 return;
             }
 
@@ -42,13 +42,13 @@ let bridge = (headers, cache) => {
                         .then(b24callInfo => {
                             bitrix24Info['b24uuid'] = b24callInfo['uuid'];
 
-                            log('bridge Hiding call screens...');
+                            log('Hiding call screens...');
 
                             if (b24callInfo['type'] === 2) { // Processing screens only for inbound calls
 
                                 hideB24CallScreen(bitrix24Info, cache, (err) => {
                                     if (err) {
-                                        log('bridge' + err);
+                                        log(err);
                                     }
                                 });
 
@@ -86,13 +86,13 @@ let bridge = (headers, cache) => {
                             }
                         }).catch(err => {
                             // If we can't get call UUID - do nothing. Really
-                            log('bridge ' + err);
+                            log(err);
                         });
                 })
             }, 500);
         })
         .catch(err => {
-            log('bridge Cannot get employeeList: ' + err);
+            log('Cannot get employeeList: ' + err);
         });
 }
 

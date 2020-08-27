@@ -1,6 +1,7 @@
 
 const request = require('urllib'),
     log = require('app/init/logger')(module),
+    registerOrphanedCall = require('app/lib/bitrix/registerOrphanedCall'),
     fusionConfig = require('app/config/fusion'),
     bitrixConfig = require('app/config/bitrix');
 
@@ -11,6 +12,8 @@ let finishB24Call = (callInfo, cache) => {
         return;
     }
 
+    callInfo = cache.get('hangup_data_' + callInfo['b24uuid']) || callInfo;
+
     if (cache.get('finishedCall_' + callInfo['b24uuid']) === 'true') {
         log('Call ' + callInfo['b24uuid'] + ' is already finished on Bitrix, exiting');
         return;
@@ -18,7 +21,7 @@ let finishB24Call = (callInfo, cache) => {
 
     log('Registering finished call ' + callInfo['b24uuid'] + ' to userID: ' + callInfo['userID']);
 
-    cache.put('finishedCall_' +  callInfo['b24uuid'], 'true', 3 * 60 * 60 * 1000);
+    cache.put('finishedCall_' +  callInfo['b24uuid'], 'true', 1500);
 
     let requestURL = bitrixConfig.url + '/telephony.externalcall.finish.json?'
         + 'CALL_ID=' + callInfo['b24uuid']
@@ -39,6 +42,12 @@ let finishB24Call = (callInfo, cache) => {
 
         if (err) {
             log(err);
+            return;
+        }
+
+        if (res.statusCode === 400) {
+            log('Registering orphaned call');
+            registerOrphanedCall(callInfo);
             return;
         }
 
