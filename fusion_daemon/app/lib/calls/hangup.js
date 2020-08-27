@@ -104,13 +104,11 @@ let hangup = (headers, cache) => {
                 getB24EmployeeList(cache)
                     .then(res => {
                         let employeeList = res['phoneToId'];
-                        let requestDelay = 3500;
 
                         // We did get user from request.
                         if (employeeList[dialedUser]) {
                             log('User with extension ' + dialedUser + ' found, using userID: ' + employeeList[dialedUser]);
                             bitrix24Info['userID'] = employeeList[dialedUser];
-                            requestDelay = 500; // If we found user - register it more quick :)
                         }
 
                         if (!bitrix24Info.hasOwnProperty('userID')) {
@@ -118,7 +116,26 @@ let hangup = (headers, cache) => {
                             bitrix24Info['userID'] = bitrixConfig.defaultUserID;
                         }
 
+                        // Wait for other CHANNEL_HANGUP_COMPLETE to arrive
+                        let bitrix24InfoCached = cache.get('hangup_data_' + bitrix24Info['b24uuid']);
+                        if (bitrix24InfoCached) {
+                            log('Updating hangup data of ' + bitrix24Info['b24uuid']);
+                            // We already have some data of this call. Let's merge.
+                            if (bitrix24InfoCached['rec_path']) {
+                                log('Updating hangup data of ' + bitrix24Info['b24uuid'] + " with record");
+                                bitrix24Info['rec_path'] = bitrix24InfoCached['rec_path'];
+                                bitrix24Info['rec_file'] = bitrix24InfoCached['rec_file'];
+                            }
+                            // Select non-default user if possible
+                            if (bitrix24InfoCached['userID']) {
+                                log('Updating hangup data of ' + bitrix24Info['b24uuid'] + " with userID");
+                                bitrix24Info['userID'] = (bitrix24InfoCached['userID'] == bitrixConfig.defaultUserID) ? bitrix24Info['userID'] : bitrix24InfoCached['userID'];
+                            }
+                        }
+                        cache.put('hangup_data_' + bitrix24Info['b24uuid'], bitrix24Info, 3500);
+
                         setTimeout(() => {
+                            //log("Finishing call: " + JSON.stringify(headers, null, 2));
                             finishB24Call(bitrix24Info, cache);
 
                             let legANumber = headers['Caller-Orig-Caller-ID-Number']
@@ -180,7 +197,7 @@ let hangup = (headers, cache) => {
                                         });
                                 });
                             }
-                        }, requestDelay);
+                        }, 2500);
                     })
                     .catch(err => log('Hangup: ' + err));
             })
