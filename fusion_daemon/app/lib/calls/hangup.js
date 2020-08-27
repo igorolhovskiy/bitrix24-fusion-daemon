@@ -40,7 +40,7 @@ let hangup = (headers, cache) => {
                     bitrix24Info['sip_code'] = '487';
                 }
 
-
+                // Known cases for adjusting sip_code
                 if (!bitrix24Info['sip_code']
                     || bitrix24Info['sip_code'] === '') {
 
@@ -62,6 +62,13 @@ let hangup = (headers, cache) => {
                     if (headers['variable_DIALSTATUS'] === 'NOANSWER'
                             && headers['variable_originate_disposition'] === 'NO_ANSWER') {
                         bitrix24Info['sip_code'] = '480';
+                    }
+
+                    // Answered
+                    if (headers.hasOwnProperty('variable_rtp_audio_in_raw_bytes')
+                            && headers['variable_DIALSTATUS'] === 'SUCCESS'
+                            && headers['variable_endpoint_disposition'] === 'ANSWER') {
+                        bitrix24Info['sip_code'] = '200';
                     }
                 }
 
