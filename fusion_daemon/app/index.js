@@ -72,6 +72,7 @@ if (bitrixConfig.url) {
         });
 
         restHTTPServer.all('/*', (req, res) => {
+            log('restHTTPServer plain request: ' + JSON.stringify(req));
             res.json({
                 status: '200',
                 message: 'PONG'

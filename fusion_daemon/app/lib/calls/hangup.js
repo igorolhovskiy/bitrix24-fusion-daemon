@@ -72,6 +72,12 @@ let hangup = (headers, cache) => {
                             && headers['variable_endpoint_disposition'] === 'ANSWER') {
                         bitrix24Info['sip_code'] = '200';
                     }
+
+                    // Cancelled
+                    if (headers['Hangup-Cause'] === 'ORIGINATOR_CANCEL'
+                            && headers['variable_DIALSTATUS'] === 'CANCEL') {
+                        bitrix24Info['sip_code'] = '487';
+                    }
                 }
 
 
